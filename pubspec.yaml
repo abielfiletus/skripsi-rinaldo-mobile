@@ -1,0 +1,43 @@
+name: skripsi_rinaldo
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.3
+  flutter_svg: ^0.18.0
+  intl: 0.16.1
+  url_launcher: ^5.4.1
+  provider: ^4.0.0
+  fluttertoast: ^7.1.1
+  shared_preferences: ^0.5.12+2
+  flutter_form_builder: ^3.14.1
+  expandable: ^4.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: Notosans
+      fonts:
+        - asset: assets/fonts/notosans_regular.ttf
+        - asset: assets/fonts/notosans_bold.ttf
+        - asset: assets/fonts/notosans_italic.ttf
+          style: italic
+        
