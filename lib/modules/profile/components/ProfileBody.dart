@@ -3,10 +3,12 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:skripsi_rinaldo/modules/change-password/ChangePassword.dart';
 
+import 'package:skripsi_rinaldo/modules/change-password/ChangePassword.dart';
+import 'package:skripsi_rinaldo/modules/login/Login.dart';
 import 'package:skripsi_rinaldo/providers/auth.dart';
 import 'package:skripsi_rinaldo/utils/Constants.dart';
+import 'package:skripsi_rinaldo/utils/FormBuilderImagePicker.dart';
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
 
@@ -31,6 +33,7 @@ class _ProfileBodyState extends State<ProfileBody> {
   DateTime parsedDate = DateTime.parse(new DateTime.now().toString());
   DateTime _birthDate;
   JenisKelamin _jenisKelamin;
+  String _avatar;
   int _role;
 
   @override
@@ -39,6 +42,9 @@ class _ProfileBodyState extends State<ProfileBody> {
     nameController.text = widget.user.name;
     nisController.text = widget.user.nis.toString();
     emailController.text = widget.user.email;
+    _birthDate = widget.user.tanggalLahir;
+    _jenisKelamin = widget.user.jenisKelamin;
+    _role = widget.user.roleId;
   }
 
   @override
@@ -59,20 +65,28 @@ class _ProfileBodyState extends State<ProfileBody> {
                     shape: BoxShape.circle,
                     boxShadow: [BoxShadow(blurRadius: 5, color: Colors.black26, spreadRadius: 1)],
                   ),
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.white,
-                    child: widget.user.jenisKelamin == JenisKelamin.laki
-                        ? Image.asset(
-                            'assets/images/man.png',
-                            width: 70,
-                            height: 70,
-                          )
-                        : Image.asset(
-                            'assets/images/woman.png',
-                            width: 70,
-                            height: 70,
-                          ),
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(150),
+                      child: widget.user.avatar.isNotEmpty
+                          ? Image.network(
+                              widget.user.avatar,
+                              fit: BoxFit.fill,
+                            )
+                          : widget.user.jenisKelamin == JenisKelamin.laki
+                              ? Image.asset(
+                                  'assets/images/man.png',
+                                  width: 70,
+                                  height: 70,
+                                )
+                              : Image.asset(
+                                  'assets/images/woman.png',
+                                  width: 70,
+                                  height: 70,
+                                ),
+                    ),
                   ),
                 ),
               ),
@@ -83,7 +97,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FormBuilderTextField(
-                      attribute: 'name',
+                      name: 'name',
                       textInputAction: TextInputAction.next,
                       textCapitalization: TextCapitalization.words,
                       controller: nameController,
@@ -104,11 +118,13 @@ class _ProfileBodyState extends State<ProfileBody> {
                           ),
                         ),
                       ),
-                      validators: [FormBuilderValidators.required(errorText: 'harus terisi')],
+                      validator: FormBuilderValidators.compose(
+                        [FormBuilderValidators.required(context, errorText: 'harus terisi')],
+                      ),
                     ),
                     SizedBox(height: 15),
                     FormBuilderRadioGroup(
-                      attribute: 'jenis kelamin',
+                      name: 'jenis kelamin',
                       initialValue: widget.user.jenisKelamin,
                       options: [
                         FormBuilderFieldOption(
@@ -136,12 +152,14 @@ class _ProfileBodyState extends State<ProfileBody> {
                           ),
                         ),
                       ),
-                      validators: [FormBuilderValidators.required(errorText: 'harus terisi')],
+                      validator: FormBuilderValidators.compose(
+                        [FormBuilderValidators.required(context, errorText: 'harus terisi')],
+                      ),
                       onChanged: (value) => setState(() => _jenisKelamin = value),
                     ),
                     SizedBox(height: 15),
                     FormBuilderDateTimePicker(
-                      attribute: 'tgl lahir',
+                      name: 'tgl lahir',
                       inputType: InputType.date,
                       firstDate: DateTime(1700),
                       lastDate: DateTime(parsedDate.year, 12),
@@ -165,37 +183,43 @@ class _ProfileBodyState extends State<ProfileBody> {
                           ),
                         ),
                       ),
-                      validators: [FormBuilderValidators.required(errorText: 'harus terisi')],
+                      validator: FormBuilderValidators.compose(
+                        [FormBuilderValidators.required(context, errorText: 'harus terisi')],
+                      ),
                       onChanged: (value) => setState(() => _birthDate = value),
                     ),
-                    SizedBox(height: 15),
-                    FormBuilderTextField(
-                      attribute: 'nis',
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.number,
-                      controller: nisController,
-                      maxLength: 20,
-                      decoration: InputDecoration(
-                        labelText: 'NIS',
-                        contentPadding: EdgeInsets.all(10),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                            width: 1.0,
+                    widget.user.roleId != 2 ? SizedBox() : SizedBox(height: 15),
+                    widget.user.roleId != 2
+                        ? SizedBox()
+                        : FormBuilderTextField(
+                            name: 'nis',
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.number,
+                            controller: nisController,
+                            maxLength: 20,
+                            decoration: InputDecoration(
+                              labelText: 'NIS',
+                              contentPadding: EdgeInsets.all(10),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.blue,
+                                  width: 1.0,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.black26,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                            validator: FormBuilderValidators.compose(
+                              [FormBuilderValidators.required(context, errorText: 'harus terisi')],
+                            ),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black26,
-                            width: 1.0,
-                          ),
-                        ),
-                      ),
-                      validators: [FormBuilderValidators.required(errorText: 'harus terisi')],
-                    ),
                     SizedBox(height: 15),
                     FormBuilderRadioGroup(
-                      attribute: 'role',
+                      name: 'role',
                       initialValue: widget.user.roleId,
                       options: [
                         FormBuilderFieldOption(
@@ -227,13 +251,32 @@ class _ProfileBodyState extends State<ProfileBody> {
                           ),
                         ),
                       ),
-                      validators: [FormBuilderValidators.required(errorText: 'harus terisi')],
+                      validator: FormBuilderValidators.compose(
+                        [FormBuilderValidators.required(context, errorText: 'harus terisi')],
+                      ),
                       onChanged: (value) => setState(() => _role = value),
-                      readOnly: true,
+                      enabled: false,
+                    ),
+                    SizedBox(height: 15),
+                    FormBuilderImagePicker(
+                      attribute: 'avatar',
+                      title: 'Avatar',
+                      maxHeight: 500,
+                      maxWidth: 500,
+                      imageHeight: 200,
+                      imageWidth: MediaQuery.of(context).size.width - 20,
+                      maxImages: 1,
+                      imageQuality: 100,
+                      decoration: InputDecoration(border: InputBorder.none),
+                      onChanged: (val) {
+                        setState(() => _avatar = val[0]);
+                        print(_avatar);
+                      },
+                      validators: [FormBuilderValidators.required(context, errorText: 'harus terisi')],
                     ),
                     SizedBox(height: 15),
                     FormBuilderTextField(
-                      attribute: 'email',
+                      name: 'email',
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.emailAddress,
                       controller: emailController,
@@ -254,10 +297,10 @@ class _ProfileBodyState extends State<ProfileBody> {
                           ),
                         ),
                       ),
-                      validators: [
-                        FormBuilderValidators.required(errorText: 'harus terisi'),
-                        FormBuilderValidators.email(errorText: 'email tidak valid'),
-                      ],
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(context, errorText: 'harus terisi'),
+                        FormBuilderValidators.email(context, errorText: 'email tidak valid'),
+                      ]),
                     ),
                     SizedBox(height: 20),
                     Container(
@@ -313,15 +356,19 @@ class _ProfileBodyState extends State<ProfileBody> {
                                   context,
                                   listen: false,
                                 ).updateUser(
-                                  nameController.text,
-                                  _birthDate,
-                                  _jenisKelamin,
-                                  _role,
-                                  nisController.text,
-                                  emailController.text,
+                                  name: nameController.text,
+                                  birthOfDate: _birthDate,
+                                  jenisKelamin: _jenisKelamin,
+                                  role: _role,
+                                  nis: nisController.text,
+                                  avatar: _avatar,
+                                  email: emailController.text,
                                 );
-                                Navigator.of(context).pop();
-                                Fluttertoast.showToast(msg: 'Berhasil daftar. Silakan Login');
+                                setState(() {
+                                  _isLoading = false;
+                                  _avatar = null;
+                                });
+                                Fluttertoast.showToast(msg: 'Berhasil mengubah data profile');
                               } on HttpException catch (err) {
                                 setState(() => _isLoading = false);
                                 Fluttertoast.showToast(
@@ -331,6 +378,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                                 );
                               } catch (err) {
                                 setState(() => _isLoading = false);
+                                print(err);
                                 Fluttertoast.showToast(
                                   msg: 'Gagal melakukan pendaftaran. Silakan coba lagi.',
                                   backgroundColor: Colors.red,
@@ -439,40 +487,24 @@ class _ProfileBodyState extends State<ProfileBody> {
                             ),
                           ),
                           onTap: () async {
-                            if (validateAndSave()) {
-                              setState(() => _isLoading = true);
-
-                              try {
-                                await Provider.of<AuthProvider>(
-                                  context,
-                                  listen: false,
-                                ).updateUser(
-                                  nameController.text,
-                                  _birthDate,
-                                  _jenisKelamin,
-                                  _role,
-                                  nisController.text,
-                                  emailController.text,
-                                );
-                                Navigator.of(context).pop();
-                                Fluttertoast.showToast(msg: 'Berhasil daftar. Silakan Login');
-                              } on HttpException catch (err) {
-                                setState(() => _isLoading = false);
-                                Fluttertoast.showToast(
-                                  msg: err.toString(),
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                );
-                              } catch (err) {
-                                setState(() => _isLoading = false);
-                                Fluttertoast.showToast(
-                                  msg: 'Gagal melakukan pendaftaran. Silakan coba lagi.',
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                );
-                              }
-                            } else {
+                            try {
+                              await Provider.of<AuthProvider>(context, listen: false).logout();
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => LoginPage()));
+                              Fluttertoast.showToast(msg: 'Berhasil Keluar');
+                            } on HttpException catch (err) {
                               setState(() => _isLoading = false);
+                              Fluttertoast.showToast(
+                                msg: err.toString(),
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                              );
+                            } catch (err) {
+                              setState(() => _isLoading = false);
+                              Fluttertoast.showToast(
+                                msg: 'Gagal keluar. Silakan coba lagi.',
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                              );
                             }
                           },
                         ),

@@ -13,7 +13,7 @@ class MateriProvider extends ChangeNotifier {
     return [..._materi];
   }
 
-  Future<void> getList({@required String token, String classId = '', String userId = ''}) async {
+  Future<void> getList({@required String token, String classId = '', @required String userId}) async {
     final params = {
       'form[class_id]': classId,
       'form[user_id]': userId,
@@ -21,44 +21,14 @@ class MateriProvider extends ChangeNotifier {
 
     final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer $token"};
 
-    final url = Uri.http(constant.API_URL, 'api/Materi', params);
+    final url = Uri.http(constant.API_URL, 'api/class-materi', params);
 
     try {
-      // final res = await http.get(url, headers: headers);
-      // final List data = json.decode(res.body)['result'];
-      final List data = [
-        {
-          'id': 1,
-          'class_id': 1,
-          'class_name': 'Tes Class Name',
-          'status': 'Lulus',
-          'name': 'Tes Materi Name',
-          'path': '',
-          'class_materi_id': 1,
-          'tanggal_kumpul': '2021-04-24',
-          'quiz_id': 1,
-          'quiz_name': 'Tes Quiz Name',
-          'quiz_nilai_lulus': 70,
-          'quiz_total_soal': 10,
-        },
-        {
-          'id': 2,
-          'class_id': 1,
-          'class_name': 'Tes Class Name',
-          'status': 'Tidak Lulus',
-          'name': 'Tes Materi Name 2',
-          'path': '',
-          'class_materi_id': 1,
-          'tanggal_kumpul': '2021-05-1',
-          'quiz_id': 2,
-          'quiz_name': 'Tes Quiz Name',
-          'quiz_nilai_lulus': 70,
-          'quiz_total_soal': 10,
-        },
-      ];
+      final res = await http.get(url, headers: headers);
+      final List data = json.decode(res.body)['data'];
 
       final List<Materi> loadedMateri = [];
-      print(url);
+
       data.asMap().forEach((key, value) {
         loadedMateri.add(
           Materi(
@@ -69,6 +39,7 @@ class MateriProvider extends ChangeNotifier {
             name: value['name'],
             path: value['path'],
             tanggalKumpul: value['tanggal_kumpul'],
+            historyId: value['history_id'] != null ? value['history_id'].toString() : '',
             quiz: Quiz(
               classMateriId: value['class_materi_id'],
               id: value['quiz_id'],

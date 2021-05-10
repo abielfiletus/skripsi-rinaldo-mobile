@@ -18,9 +18,8 @@ class ButtonIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        border: Border(top: borderSideTop),
-      ),
+      decoration: BoxDecoration(border: Border(top: borderSideTop)),
+      width: 80,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -35,7 +34,10 @@ class ButtonIcon extends StatelessWidget {
                   icon,
                   Text(
                     text,
-                    style: TextStyle(fontWeight: fontWeight),
+                    style: TextStyle(fontWeight: fontWeight, fontSize: 11),
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                    maxLines: 2,
                   ),
                 ],
               ),

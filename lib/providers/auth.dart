@@ -21,37 +21,24 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> login(String email, String pass) async {
-    // const Map<String, String> headers = {"Content-type": "application/json"};
-    // final String jsonData = json.encode({
-    //   "email": email,
-    //   "password": pass,
-    // });
+    const Map<String, String> headers = {"Content-type": "application/json"};
+    final String jsonData = json.encode({
+      "email": email,
+      "password": pass,
+    });
 
     try {
-      // final res = await http.post(
-      //   'http://' + constant.API_URL + '/api/auth/login',
-      //   body: jsonData,
-      //   headers: headers,
-      // );
+      final res = await http.post(
+        'http://' + constant.API_URL + '/api/auth/login',
+        body: jsonData,
+        headers: headers,
+      );
 
-      // final bool status = json.decode(res.body)['status'];
+      final bool status = json.decode(res.body)['status'];
 
-      // if (!status) throw HttpException('Kombinasi email dan password tidak sesuai.');
+      if (!status) throw HttpException('Kombinasi email dan password tidak sesuai.');
 
-      // final data = json.decode(res.body)['result'];
-      // print(data);
-
-      const Map<String, dynamic> data = {
-        'id': 1,
-        'email': 'rinaldo@gmail.com',
-        'name': 'Rinaldo Nazario',
-        'jenis_kelamin': 'L',
-        'tanggal_lahir': '1997-04-30',
-        'nis': 1234567890,
-        'role_id': 2,
-        'role_name': 'siswa',
-        'token': 'asdasdasdasd',
-      };
+      final data = json.decode(res.body)['data'];
 
       _userdata = User(
         email: data['email'],
@@ -60,9 +47,10 @@ class AuthProvider with ChangeNotifier {
         tanggalLahir: formatter.parse(data['tanggal_lahir']),
         name: data['name'],
         nis: data['nis'],
-        roleId: data['role_id'],
-        roleName: data['role_name'],
+        roleId: data['role.id'],
+        roleName: data['role.name'],
         jenisKelamin: data['jenis_kelamin'] == 'L' ? constant.JenisKelamin.laki : constant.JenisKelamin.perempuan,
+        avatar: data['avatar'],
       );
 
       final prefs = await SharedPreferences.getInstance();
@@ -74,8 +62,9 @@ class AuthProvider with ChangeNotifier {
           'jenis_kelamin': data['jenis_kelamin'],
           'tanggal_lahir': data['tanggal_lahir'],
           'nis': data['nis'],
-          'role_id': data['role_id'],
-          'role_name': data['role_name'],
+          'role_id': data['role.id'],
+          'role_name': data['role.name'],
+          'avatar': data['avatar'],
           'token': data['token'],
         },
       );
@@ -87,52 +76,58 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> register(
-    String nama,
-    DateTime birthOfDate,
-    constant.JenisKelamin jenisKelamin,
-    int role,
-    String nis,
-    String email,
-    String password,
-    String confirmationPassword,
-  ) async {
+  Future<void> register({
+    @required String nama,
+    @required DateTime birthOfDate,
+    @required constant.JenisKelamin jenisKelamin,
+    @required int role,
+    @required String nis,
+    @required String email,
+    @required String password,
+    @required String confirmationPassword,
+    String avatar,
+  }) async {
     const Map<String, String> headers = {"Content-type": "application/json"};
 
     String jenis = jenisKelamin == constant.JenisKelamin.laki ? 'L' : 'P';
 
-    String jsonData = json.encode({
+    final Map<String, String> jsonData = {
       'name': nama,
       'jenis_kelamin': jenis,
-      'no_hp': role,
-      'status_pekerjaan': nis,
+      'role_id': role.toString(),
+      'nis': nis,
       'tanggal_lahir': formatter.format(birthOfDate),
       'email': email,
       'password': password,
-      'confirmation_password': confirmationPassword
-    });
-    try {
-      final res = await http.post(
-        'http://' + constant.API_URL + '/api/auth/register',
-        body: jsonData,
-        headers: headers,
-      );
+      'confirmation_password': confirmationPassword,
+    };
+    final url = Uri.http(constant.API_URL, '/api/auth/register');
+    final req = http.MultipartRequest('POST', url);
 
-      final bool status = json.decode(res.body)['status'];
-      if (!status) throw HttpException(json.decode(res.body)['err'].toString().replaceAll(RegExp(r'[\{\}\:]'), ''));
+    req.headers.addAll(headers);
+    req.fields.addAll(jsonData);
+
+    req.files.add(await http.MultipartFile.fromPath('avatar', avatar));
+
+    try {
+      final res = await req.send();
+      print(res.statusCode);
+      final bool status = res.statusCode == 201 ? true : false;
+      if (!status) throw HttpException('Gagal melakukan registrasi, silahkan coba kembali.');
     } catch (err) {
       throw (err);
     }
   }
 
-  Future<void> updateUser(
-    String nama,
-    DateTime birthOfDate,
-    constant.JenisKelamin jenisKelamin,
-    int role,
-    String nis,
-    String email,
-  ) async {
+  Future<void> updateUser({
+    @required String name,
+    @required DateTime birthOfDate,
+    @required constant.JenisKelamin jenisKelamin,
+    @required int role,
+    @required String nis,
+    @required String avatar,
+    @required String email,
+  }) async {
     String jenis;
     switch (jenisKelamin) {
       case constant.JenisKelamin.laki:
@@ -142,14 +137,18 @@ class AuthProvider with ChangeNotifier {
         jenis = 'P';
     }
 
-    String jsonData = json.encode({
-      'name': nama,
+    Map<String, String> jsonData = {
+      'name': name,
       'jenis_kelamin': jenis,
-      'role': role,
+      'role': role.toString(),
       'nis': nis,
       'tanggal_lahir': formatter.format(birthOfDate),
       'email': email
-    });
+    };
+
+    if (avatar.isNotEmpty) {
+      jsonData['avatar'] = avatar;
+    }
 
     return doUpdate(jsonData);
   }
@@ -164,14 +163,13 @@ class AuthProvider with ChangeNotifier {
         jenis = 'P';
     }
 
-    String jsonData = json.encode({
-      'id': _userdata.id,
+    Map<String, String> jsonData = {
       'name': _userdata.name,
       'jenis_kelamin': jenis,
       'tanggal_lahir': formatter.format(_userdata.tanggalLahir),
       'email': _userdata.email,
       'password': password
-    });
+    };
 
     return doUpdate(jsonData);
   }
@@ -196,7 +194,7 @@ class AuthProvider with ChangeNotifier {
     }
 
     final extractedData = json.decode(prefs.getString('userData')) as Map<String, Object>;
-    print(extractedData['tanggalLahir']);
+
     _userdata = User(
       email: extractedData['email'],
       token: extractedData['token'],
@@ -207,53 +205,63 @@ class AuthProvider with ChangeNotifier {
       roleId: extractedData['role_id'],
       roleName: extractedData['role_name'],
       jenisKelamin: extractedData['jenis_kelamin'] == 'L' ? constant.JenisKelamin.laki : constant.JenisKelamin.perempuan,
+      avatar: extractedData['avatar'],
     );
 
     notifyListeners();
     return true;
   }
 
-  Future<void> doUpdate(jsonData) async {
+  Future<void> doUpdate(Map<String, String> jsonData) async {
     final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer ${_userdata.token}"};
 
+    final url = Uri.http(constant.API_URL, '/api/user/${_userdata.id}');
+    final req = http.MultipartRequest('PUT', url);
+
+    if (jsonData.containsKey('avatar')) {
+      req.files.add(await http.MultipartFile.fromPath('avatar', jsonData['avatar']));
+      jsonData.remove('avatar');
+    }
+
+    req.headers.addAll(headers);
+    req.fields.addAll(jsonData);
+
     try {
-      final res = await http.put(
-        'http://' + constant.API_URL + '/api/auth/register',
-        body: jsonData,
-        headers: headers,
-      );
+      final res = await http.Response.fromStream(await req.send());
+      print(res.body);
+      final bool status = res.statusCode == 200 ? true : false;
 
-      final bool status = json.decode(res.body)['status'];
-
-      if (!status) throw HttpException(json.decode(res.body)['error']);
+      if (!status) throw HttpException('Gagal melakukan update data, silahkan coba kembali.');
 
       final data = json.decode(res.body)['data'];
 
       _userdata = User(
-        email: _userdata.email,
+        email: data['email'],
         token: _userdata.token,
         id: _userdata.id,
-        name: _userdata.name,
-        nis: _userdata.nis,
+        name: data['name'],
+        nis: data['nis'],
         roleId: _userdata.roleId,
+        roleName: _userdata.roleName,
         tanggalLahir: formatter.parse(data['tanggal_lahir']),
         jenisKelamin: data['jenis_kelamin'] == 'L' ? constant.JenisKelamin.laki : constant.JenisKelamin.perempuan,
+        avatar: data['avatar'],
       );
       final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode(
-        {
-          'email': _userdata.email,
-          'token': _userdata.token,
-          'id': _userdata.id,
-          'name': data['name'],
-          'jenis_kelamin': data['jenis_kelamin'],
-          'tanggal_lahir': data['tanggal_lahir'],
-          'nis': data['nis'],
-          'role_id': data['role_id'],
-          'role_name': data['role_name'],
-        },
-      );
-      prefs.setString('userData', userData);
+      final userData = {
+        'id': _userdata.id,
+        'email': data['email'],
+        'name': data['name'],
+        'jenis_kelamin': data['jenis_kelamin'],
+        'tanggal_lahir': data['tanggal_lahir'],
+        'nis': data['nis'],
+        'role_id': _userdata.roleId,
+        'role_name': _userdata.roleName,
+        'avatar': data['avatar'],
+        'token': _userdata.token,
+      };
+
+      prefs.setString('userData', json.encode(userData));
 
       notifyListeners();
     } catch (err) {

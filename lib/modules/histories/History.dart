@@ -17,8 +17,8 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   final GlobalKey<FormBuilderState> globalFormKey = new GlobalKey<FormBuilderState>();
 
-  DateTime _startDate = DateTime.parse(new DateTime.now().toString());
-  DateTime _endDate = DateTime.parse(new DateTime.now().add(Duration(days: 30)).toString());
+  DateTime _startDate = DateTime.parse(new DateTime.now().subtract(Duration(days: 30)).toString());
+  DateTime _endDate = DateTime.parse(new DateTime.now().toString());
 
   bool _isLoading = true;
   User _user;
@@ -27,7 +27,14 @@ class _HistoryPageState extends State<HistoryPage> {
   void initState() {
     super.initState();
     _user = Provider.of<AuthProvider>(context, listen: false).user;
-    Provider.of<HistoryProvider>(context, listen: false).getList(token: 'asdada').then((_) => setState(() => _isLoading = false));
+    Provider.of<HistoryProvider>(context, listen: false)
+        .getList(
+          token: _user.token,
+          userId: _user.id.toString(),
+          startDate: DateFormat('yyyy-MM-dd HH:mm').format(_startDate),
+          endDate: DateFormat('yyyy-MM-dd HH:mm').format(_endDate),
+        )
+        .then((_) => setState(() => _isLoading = false));
   }
 
   @override
@@ -64,7 +71,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     children: [
                       FormBuilderDateTimePicker(
                         inputType: InputType.date,
-                        attribute: 'start date',
+                        name: 'start date',
                         firstDate: DateTime(1700),
                         lastDate: DateTime(_startDate.year, 12),
                         format: DateFormat('yyyy-MM-dd HH:mm'),
@@ -84,11 +91,9 @@ class _HistoryPageState extends State<HistoryPage> {
                             ),
                           ),
                         ),
-                        validators: [
-                          FormBuilderValidators.required(
-                            errorText: 'Tanggal Mulai tidak boleh kosong',
-                          )
-                        ],
+                        validator: FormBuilderValidators.compose(
+                          [FormBuilderValidators.required(context, errorText: 'Tanggal Mulai tidak boleh kosong')],
+                        ),
                         onChanged: (value) => setState(
                           () => _startDate = value,
                         ),
@@ -97,7 +102,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       SizedBox(height: 10),
                       FormBuilderDateTimePicker(
                         inputType: InputType.date,
-                        attribute: 'end date',
+                        name: 'end date',
                         firstDate: DateTime(1700),
                         lastDate: DateTime(_endDate.year, 12),
                         format: DateFormat('yyyy-MM-dd HH:mm'),
@@ -117,11 +122,9 @@ class _HistoryPageState extends State<HistoryPage> {
                             ),
                           ),
                         ),
-                        validators: [
-                          FormBuilderValidators.required(
-                            errorText: 'Tanggal Akhir tidak boleh kosong',
-                          )
-                        ],
+                        validator: FormBuilderValidators.compose(
+                          [FormBuilderValidators.required(context, errorText: 'Tanggal Akhir tidak boleh kosong')],
+                        ),
                         onChanged: (value) => setState(
                           () => _endDate = value,
                         ),
@@ -171,7 +174,16 @@ class _HistoryPageState extends State<HistoryPage> {
                                       ),
                               ),
                             ),
-                            onTap: () async {},
+                            onTap: () async {
+                              Provider.of<HistoryProvider>(context, listen: false)
+                                  .getList(
+                                    token: _user.token,
+                                    userId: _user.id.toString(),
+                                    startDate: DateFormat('yyyy-MM-dd HH:mm').format(_startDate),
+                                    endDate: DateFormat('yyyy-MM-dd HH:mm').format(_endDate),
+                                  )
+                                  .then((_) => setState(() => _isLoading = false));
+                            },
                           ),
                         ),
                       ),
@@ -180,7 +192,14 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
               ),
               _isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? Container(
+                      height: size.height / 1.7,
+                      width: double.infinity,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [CircularProgressIndicator(), SizedBox(height: 10), Text('Please Wait...')],
+                      ),
+                    )
                   : Container(
                       height: size.height / 1.7,
                       child: ListView.builder(

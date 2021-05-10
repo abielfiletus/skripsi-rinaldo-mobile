@@ -6,7 +6,7 @@ class History {
   final String classMateriName;
   final int classQuizId;
   final String classQuizName;
-  final int durasi;
+  final String durasi;
   final int nilai;
   final String status;
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:skripsi_rinaldo/modules/quiz/Quiz.dart';
 import 'package:skripsi_rinaldo/utils/ExpandedCard.dart';
+import 'package:skripsi_rinaldo/utils/PdfViewer.dart';
 
 class MateriList extends StatefulWidget {
   final bool first;
@@ -8,16 +10,26 @@ class MateriList extends StatefulWidget {
   final String namaMateri;
   final String tanggalKumpul;
   final int quizId;
+  final int classId;
+  final int materiId;
+  final int userId;
   final String status;
   final String path;
+  final String historyId;
+  final String token;
 
   MateriList({
+    @required this.token,
     @required this.first,
     @required this.last,
     @required this.namaMateri,
     @required this.tanggalKumpul,
     @required this.status,
     @required this.path,
+    @required this.classId,
+    @required this.materiId,
+    @required this.userId,
+    @required this.historyId,
     this.quizId,
   });
 
@@ -145,7 +157,23 @@ class _MateriListState extends State<MateriList> {
                             child: Material(
                               child: InkWell(
                                 child: Icon(Icons.picture_as_pdf, color: Colors.red[800]),
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (ctx) => PDFViewer(
+                                        path: widget.path,
+                                        fileName: widget.namaMateri,
+                                        token: widget.token,
+                                        classId: widget.classId.toString(),
+                                        materiId: widget.materiId.toString(),
+                                        quizId: widget.quizId.toString(),
+                                        userId: widget.userId.toString(),
+                                        historyId: widget.historyId,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -189,7 +217,19 @@ class _MateriListState extends State<MateriList> {
                                         height: 32,
                                         color: Colors.green[800],
                                       ),
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (ctx) => QuizPage(
+                                              classQuizId: widget.quizId,
+                                              classId: widget.classId,
+                                              classMateriId: widget.materiId,
+                                              userId: widget.userId,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),

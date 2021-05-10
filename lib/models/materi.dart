@@ -8,6 +8,7 @@ class Materi {
   final int classId;
   final String className;
   final Quiz quiz;
+  final String historyId;
   final String status;
 
   Materi({
@@ -19,5 +20,6 @@ class Materi {
     this.quiz,
     this.status,
     this.tanggalKumpul,
+    this.historyId,
   });
 }

@@ -5,7 +5,7 @@ class HistoryList extends StatefulWidget {
   final bool first;
   final bool last;
   final String namaMateri;
-  final int durasi;
+  final String durasi;
   final int nilai;
   final String kelulusan;
 
@@ -90,7 +90,7 @@ class _HistoryListState extends State<HistoryList> {
                       TableCell(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text('${widget.durasi}'),
+                          child: Text('${widget.durasi} menit'),
                         ),
                       ),
                     ],

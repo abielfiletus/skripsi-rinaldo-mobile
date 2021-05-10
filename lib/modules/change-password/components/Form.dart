@@ -30,7 +30,7 @@ class _FormChangePasswordState extends State<FormChangePassword> {
         child: Column(
           children: [
             FormBuilderTextField(
-              attribute: 'password',
+              name: 'password',
               textInputAction: TextInputAction.next,
               controller: passwordController,
               obscureText: !_passVisible,
@@ -56,9 +56,9 @@ class _FormChangePasswordState extends State<FormChangePassword> {
                   ),
                 ),
               ),
-              validators: [
-                FormBuilderValidators.required(errorText: 'harus terisi'),
-                FormBuilderValidators.minLength(6, errorText: 'minimal 6 karakter'),
+              validator: FormBuilderValidators.compose([
+                FormBuilderValidators.required(context, errorText: 'harus terisi'),
+                FormBuilderValidators.minLength(context, 6, errorText: 'minimal 6 karakter'),
                 (value) {
                   Pattern patternSmallChar = r'([a-z])';
                   Pattern patternCapitalChar = r'([A-Z])';
@@ -71,11 +71,11 @@ class _FormChangePasswordState extends State<FormChangePassword> {
                   if (!new RegExp(patternNumber).hasMatch(value)) return "Password harus memiliki 1 angka";
                   return null;
                 }
-              ],
+              ]),
             ),
             SizedBox(height: 15),
             FormBuilderTextField(
-              attribute: 'password confirmation',
+              name: 'password confirmation',
               textInputAction: TextInputAction.done,
               controller: passwordConfirmationController,
               obscureText: !_confirmPassVisible,
@@ -101,13 +101,13 @@ class _FormChangePasswordState extends State<FormChangePassword> {
                   ),
                 ),
               ),
-              validators: [
-                FormBuilderValidators.required(errorText: 'harus terisi'),
+              validator: FormBuilderValidators.compose([
+                FormBuilderValidators.required(context, errorText: 'harus terisi'),
                 (val) {
                   if (val != passwordController.text) return 'tidak sama dengan password';
                   return null;
                 },
-              ],
+              ]),
             ),
             SizedBox(height: 20),
             Container(

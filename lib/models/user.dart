@@ -7,8 +7,9 @@ class User {
   final int roleId;
   final String roleName;
   final JenisKelamin jenisKelamin;
-  final int nis;
+  final String nis;
   final DateTime tanggalLahir;
+  final String avatar;
   final String token;
 
   User({
@@ -20,6 +21,7 @@ class User {
     this.nis,
     this.roleId,
     this.roleName,
+    this.avatar,
     this.token,
   });
 }

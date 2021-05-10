@@ -31,7 +31,7 @@ class _LoginBodyState extends State<LoginBody> {
         child: Column(
           children: [
             FormBuilderTextField(
-              attribute: 'email',
+              name: 'email',
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.emailAddress,
               controller: emailController,
@@ -52,14 +52,14 @@ class _LoginBodyState extends State<LoginBody> {
                   ),
                 ),
               ),
-              validators: [
-                FormBuilderValidators.required(errorText: 'harus terisi'),
-                FormBuilderValidators.email(errorText: 'email tidak valid'),
-              ],
+              validator: FormBuilderValidators.compose([
+                FormBuilderValidators.required(context, errorText: 'harus terisi'),
+                FormBuilderValidators.email(context, errorText: 'email tidak valid'),
+              ]),
             ),
             SizedBox(height: 15),
             FormBuilderTextField(
-              attribute: 'password',
+              name: 'password',
               textInputAction: TextInputAction.done,
               controller: passwordController,
               obscureText: _passVisible,
@@ -86,10 +86,10 @@ class _LoginBodyState extends State<LoginBody> {
                   ),
                 ),
               ),
-              validators: [
-                FormBuilderValidators.required(errorText: 'harus terisi'),
-                FormBuilderValidators.minLength(6, errorText: 'minimal 6 karakter'),
-              ],
+              validator: FormBuilderValidators.compose([
+                FormBuilderValidators.required(context, errorText: 'harus terisi'),
+                FormBuilderValidators.minLength(context, 6, errorText: 'minimal 6 karakter'),
+              ]),
             ),
             SizedBox(height: 15),
             RichText(

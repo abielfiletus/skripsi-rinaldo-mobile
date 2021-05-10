@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/models/history.dart';
+import 'package:skripsi_rinaldo/utils/HttpException.dart';
 
 class HistoryProvider extends ChangeNotifier {
   List<History> _histories = [];
@@ -12,33 +13,20 @@ class HistoryProvider extends ChangeNotifier {
     return [..._histories];
   }
 
-  Future<void> getList({@required String token, String startDate = '', String endDate = ''}) async {
+  Future<void> getList({@required String token, @required String userId, String startDate = '', String endDate = ''}) async {
     final params = {
+      'form[user_id]': userId,
       'form[start_date]': startDate,
       'form[end_date]': endDate,
     };
 
     final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer $token"};
 
-    final url = Uri.http(constant.API_URL, 'api/history', params);
+    final url = Uri.http(constant.API_URL, 'api/user-class-history', params);
 
     try {
-      // final res = await http.get(url, headers: headers);
-      // final List data = json.decode(res.body)['result'];
-      final List data = [
-        {
-          'id': 1,
-          'class_id': 1,
-          'class_materi_id': 1,
-          'class_materi_name': 'Tes Nama Materi',
-          'class_name': 'Tes Nama Kelas',
-          'class_quiz_id': 1,
-          'class_quiz_name': 'Tes Nama Quiz',
-          'durasi': 30,
-          'nilai': 100,
-          'status': 'Lulus',
-        },
-      ];
+      final res = await http.get(url, headers: headers);
+      final List data = json.decode(res.body)['data'];
 
       final List<History> loadedHistory = [];
       print(url);
@@ -46,13 +34,9 @@ class HistoryProvider extends ChangeNotifier {
         loadedHistory.add(
           History(
             id: value['id'],
-            classId: value['class_id'],
             classMateriID: value['class_materi_id'],
             classMateriName: value['class_materi_name'],
-            className: value['class_name'],
-            classQuizId: value['class_quiz_id'],
-            classQuizName: value['class_quiz_name'],
-            durasi: value['durasi'],
+            durasi: (value['durasi'] / 60).toStringAsFixed(2),
             nilai: value['nilai'],
             status: value['status'],
           ),
@@ -62,6 +46,55 @@ class HistoryProvider extends ChangeNotifier {
       _histories = loadedHistory;
       notifyListeners();
     } catch (err) {
+      throw err;
+    }
+  }
+
+  Future<void> updateHistory({
+    @required String token,
+    String classId = '',
+    String userId,
+    String classMateriId,
+    String classQuizId,
+    String durasi,
+    String historyId,
+  }) async {
+    final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer $token"};
+
+    final String jsonData = json.encode({
+      'class_id': classId,
+      'user_id': userId,
+      'class_materi_id': classMateriId,
+      'class_quiz_id': classQuizId != 'null' ? classQuizId : '',
+      'durasi': durasi,
+    });
+
+    http.Response res;
+
+    try {
+      if (historyId != null) {
+        res = await http.put(
+          'http://' + constant.API_URL + '/api/user-class-history/$historyId',
+          body: jsonData,
+          headers: headers,
+        );
+      } else {
+        res = await http.post(
+          'http://' + constant.API_URL + '/api/user-class-history',
+          body: jsonData,
+          headers: headers,
+        );
+      }
+
+      final bool status = json.decode(res.body)['status'];
+
+      if (!status) throw HttpException('Gagal mengupdate history.');
+
+      final data = json.decode(res.body)['data'];
+
+      notifyListeners();
+    } catch (err) {
+      print(err);
       throw err;
     }
   }
