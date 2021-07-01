@@ -268,10 +268,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                       maxImages: 1,
                       imageQuality: 100,
                       decoration: InputDecoration(border: InputBorder.none),
-                      onChanged: (val) {
-                        setState(() => _avatar = val[0]);
-                        print(_avatar);
-                      },
+                      onChanged: (val) => setState(() => _avatar = val[0]),
                       validators: [FormBuilderValidators.required(context, errorText: 'harus terisi')],
                     ),
                     SizedBox(height: 15),

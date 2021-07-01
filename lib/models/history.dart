@@ -9,6 +9,8 @@ class History {
   final String durasi;
   final int nilai;
   final String status;
+  final String userName;
+  final String userAvatar;
 
   History({
     this.id,
@@ -21,5 +23,7 @@ class History {
     this.durasi,
     this.nilai,
     this.status,
+    this.userName,
+    this.userAvatar,
   });
 }

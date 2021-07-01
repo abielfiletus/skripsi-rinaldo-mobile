@@ -9,6 +9,9 @@ import 'package:skripsi_rinaldo/providers/auth.dart';
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
 import 'package:skripsi_rinaldo/modules/forgot-password/ForgotPassword.dart';
 import 'package:skripsi_rinaldo/modules/register/Register.dart';
+import 'package:skripsi_rinaldo/modules/guru/dashboard/Dashboard.dart';
+import 'package:skripsi_rinaldo/modules/murid/dashboard/Dashboard.dart';
+import 'package:skripsi_rinaldo/modules/orang_tua/dashboard/Dashboard.dart';
 
 class LoginBody extends StatefulWidget {
   @override
@@ -168,6 +171,25 @@ class _LoginBodyState extends State<LoginBody> {
                               await Provider.of<AuthProvider>(context, listen: false).login(
                                 emailController.text,
                                 passwordController.text,
+                              );
+                              final role = Provider.of<AuthProvider>(context, listen: false).user.roleId;
+                              setState(() => _isLoading = false);
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) {
+                                    switch (role) {
+                                      case 1:
+                                        return DashboardGuruPage();
+                                        break;
+                                      case 2:
+                                        return DashboardMuridPage();
+                                        break;
+                                      default:
+                                        return DashboardOrtuPage();
+                                    }
+                                  },
+                                ),
                               );
                               Fluttertoast.showToast(msg: 'Successfully Login.');
                             } on HttpException catch (err) {

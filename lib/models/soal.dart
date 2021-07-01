@@ -7,6 +7,7 @@ class Soal {
   final String jawabanC;
   final String jawabanD;
   final String jawabanE;
+  final String jawabanBenar;
 
   Soal({
     this.id,
@@ -17,5 +18,6 @@ class Soal {
     this.jawabanC,
     this.jawabanD,
     this.jawabanE,
+    this.jawabanBenar,
   });
 }

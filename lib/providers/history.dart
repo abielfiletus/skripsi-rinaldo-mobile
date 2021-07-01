@@ -13,11 +13,18 @@ class HistoryProvider extends ChangeNotifier {
     return [..._histories];
   }
 
-  Future<void> getList({@required String token, @required String userId, String startDate = '', String endDate = ''}) async {
+  Future<void> getList({
+    @required String token,
+    String userId,
+    String startDate = '',
+    String endDate = '',
+    String classMateriId = '',
+  }) async {
     final params = {
       'form[user_id]': userId,
       'form[start_date]': startDate,
       'form[end_date]': endDate,
+      'form[class_materi_id]': classMateriId,
     };
 
     final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer $token"};
@@ -29,7 +36,7 @@ class HistoryProvider extends ChangeNotifier {
       final List data = json.decode(res.body)['data'];
 
       final List<History> loadedHistory = [];
-      print(url);
+
       data.asMap().forEach((key, value) {
         loadedHistory.add(
           History(
@@ -39,6 +46,8 @@ class HistoryProvider extends ChangeNotifier {
             durasi: (value['durasi'] / 60).toStringAsFixed(2),
             nilai: value['nilai'],
             status: value['status'],
+            userAvatar: value['avatar'],
+            userName: value['name'],
           ),
         );
       });
@@ -74,13 +83,13 @@ class HistoryProvider extends ChangeNotifier {
     try {
       if (historyId != null) {
         res = await http.put(
-          'http://' + constant.API_URL + '/api/user-class-history/$historyId',
+          Uri.http(constant.API_URL, '/api/user-class-history/$historyId'),
           body: jsonData,
           headers: headers,
         );
       } else {
         res = await http.post(
-          'http://' + constant.API_URL + '/api/user-class-history',
+          Uri.http(constant.API_URL, '/api/user-class-history'),
           body: jsonData,
           headers: headers,
         );

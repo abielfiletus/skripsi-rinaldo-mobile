@@ -28,6 +28,7 @@ class _ForHRegisterState extends State<FormRegister> {
 
   String _avatar;
   bool _isLoading = false;
+  bool _nisVisible = true;
   bool _passVisible = false;
   bool _confirmPassVisible = false;
   DateTime parsedDate = DateTime.parse(new DateTime.now().toString());
@@ -141,33 +142,6 @@ class _ForHRegisterState extends State<FormRegister> {
                 onChanged: (value) => setState(() => _birthDate = value),
               ),
               SizedBox(height: 15),
-              FormBuilderTextField(
-                name: 'nis',
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                controller: nisController,
-                maxLength: 20,
-                decoration: InputDecoration(
-                  labelText: 'NIS',
-                  contentPadding: EdgeInsets.all(10),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blue,
-                      width: 1.0,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black26,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-                validator: FormBuilderValidators.compose(
-                  [FormBuilderValidators.required(context, errorText: 'harus terisi')],
-                ),
-              ),
-              SizedBox(height: 15),
               FormBuilderRadioGroup(
                 name: 'role',
                 options: [
@@ -203,9 +177,56 @@ class _ForHRegisterState extends State<FormRegister> {
                 validator: FormBuilderValidators.compose(
                   [FormBuilderValidators.required(context, errorText: 'harus terisi')],
                 ),
-                onChanged: (value) => setState(() => _role = value),
+                onChanged: (value) => setState(() {
+                  _role = value;
+                  _nisVisible = _role != 1;
+                }),
               ),
               SizedBox(height: 15),
+              Visibility(
+                visible: _nisVisible,
+                child: Column(
+                  children: [
+                    FormBuilderTextField(
+                      name: 'nis',
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      controller: nisController,
+                      maxLength: 20,
+                      decoration: InputDecoration(
+                        labelText: 'NIS',
+                        contentPadding: EdgeInsets.all(10),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                            width: 1.0,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black26,
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                      validator: FormBuilderValidators.compose(
+                        [
+                          (val) {
+                            if (_role != 1) {
+                              if (val == null || val is String && val.isEmpty) {
+                                return 'harus terisi';
+                              }
+                              return null;
+                            }
+                            return null;
+                          }
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                  ],
+                ),
+              ),
               FormBuilderImagePicker(
                 attribute: 'avatar',
                 title: 'Avatar',
@@ -216,10 +237,8 @@ class _ForHRegisterState extends State<FormRegister> {
                 maxImages: 1,
                 imageQuality: 100,
                 decoration: InputDecoration(border: InputBorder.none),
-                onChanged: (val) {
-                  setState(() => _avatar = val[0]);
-                  print(_avatar);
-                },
+                onChanged: (val) =>
+                  setState(() => _avatar = val[0]),
                 validators: [FormBuilderValidators.required(context, errorText: 'harus terisi')],
               ),
               SizedBox(height: 15),

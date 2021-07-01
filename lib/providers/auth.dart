@@ -23,19 +23,16 @@ class AuthProvider with ChangeNotifier {
   Future<void> login(String email, String pass) async {
     const Map<String, String> headers = {"Content-type": "application/json"};
     final String jsonData = json.encode({
-      "email": email,
+      "email": email.trim(),
       "password": pass,
     });
 
+    Uri url = Uri.http(constant.API_URL, '/api/auth/login');
+
     try {
-      final res = await http.post(
-        'http://' + constant.API_URL + '/api/auth/login',
-        body: jsonData,
-        headers: headers,
-      );
+      final res = await http.post(url, body: jsonData, headers: headers);
 
       final bool status = json.decode(res.body)['status'];
-
       if (!status) throw HttpException('Kombinasi email dan password tidak sesuai.');
 
       final data = json.decode(res.body)['data'];
@@ -110,8 +107,8 @@ class AuthProvider with ChangeNotifier {
     req.files.add(await http.MultipartFile.fromPath('avatar', avatar));
 
     try {
-      final res = await req.send();
-      print(res.statusCode);
+      final res = await http.Response.fromStream(await req.send());
+
       final bool status = res.statusCode == 201 ? true : false;
       if (!status) throw HttpException('Gagal melakukan registrasi, silahkan coba kembali.');
     } catch (err) {
@@ -228,7 +225,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final res = await http.Response.fromStream(await req.send());
-      print(res.body);
+
       final bool status = res.statusCode == 200 ? true : false;
 
       if (!status) throw HttpException('Gagal melakukan update data, silahkan coba kembali.');

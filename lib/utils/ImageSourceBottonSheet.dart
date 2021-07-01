@@ -66,7 +66,7 @@ class _ImageSourceBottomSheetState extends State<ImageSourceBottomSheet> {
   Future<void> _onPickImage(ImageSource source) async {
     if (_isPickingImage) return;
     _isPickingImage = true;
-    final pickedFile = await ImagePicker.pickImage(
+    final pickedFile = await ImagePicker().getImage(
       source: source,
       maxHeight: widget.maxHeight,
       maxWidth: widget.maxWidth,

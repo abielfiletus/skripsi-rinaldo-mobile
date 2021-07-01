@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skripsi_rinaldo/modules/guru/BottomNavigation.dart';
+import 'package:skripsi_rinaldo/modules/orang_tua/BottomNavigation.dart';
 
 import 'package:skripsi_rinaldo/providers/auth.dart';
-import 'package:skripsi_rinaldo/utils/BottomNavigation.dart';
+import 'package:skripsi_rinaldo/modules/murid/BottomNavigation.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/profile/components/ProfileBody.dart';
 
@@ -34,11 +36,21 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         backgroundColor: Colors.white,
       ),
-      bottomNavigationBar: BottomNavigation(
-        role: _user.roleId,
-        active: 'profile',
-      ),
+      bottomNavigationBar: bottomNavigation(_user.roleId),
       body: ProfileBody(_user),
     );
+  }
+
+  Widget bottomNavigation(role) {
+    switch (role) {
+      case 1:
+        return BottomNavigationGuru('profile');
+        break;
+      case 2:
+        return BottomNavigationMurid('profile');
+        break;
+      default:
+        return BottomNavigationOrtu('profile');
+    }
   }
 }

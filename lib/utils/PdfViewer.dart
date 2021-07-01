@@ -21,16 +21,20 @@ class PDFViewer extends StatefulWidget {
   final String materiId;
   final String userId;
   final String historyId;
+  final bool updateHistory;
+  final bool timer;
 
   PDFViewer({
     @required this.path,
     @required this.fileName,
     @required this.token,
-    @required this.quizId,
     @required this.classId,
     @required this.materiId,
     @required this.userId,
-    @required this.historyId,
+    this.updateHistory = true,
+    this.timer = true,
+    this.historyId,
+    this.quizId,
   });
 
   @override
@@ -85,25 +89,31 @@ class _PDFViewerState extends State<PDFViewer> {
     timerSubscription.cancel();
     timerStream = null;
 
-    historyProvider
-        .updateHistory(
-      token: widget.token,
-      classId: widget.classId,
-      classMateriId: widget.materiId,
-      classQuizId: widget.quizId,
-      durasi: secondsCounter.toString(),
-      userId: widget.userId,
-      historyId: widget.historyId,
-    )
-        .then((_) {
-      kelasProvider.getList(token: widget.token, userId: int.parse(widget.userId)).then((_) {
-        final data = kelasProvider.list;
+    if (widget.updateHistory) {
+      historyProvider
+          .updateHistory(
+        token: widget.token,
+        classId: widget.classId,
+        classMateriId: widget.materiId,
+        classQuizId: widget.quizId,
+        durasi: secondsCounter.toString(),
+        userId: widget.userId,
+        historyId: widget.historyId,
+      )
+          .then((_) {
+        kelasProvider.getList(token: widget.token, userId: int.parse(widget.userId)).then((_) {
+          final data = kelasProvider.list;
 
-        if (data.length > 0) {
-          materiProvider.getList(token: widget.token, userId: widget.userId);
-        }
+          if (data.length > 0) {
+            materiProvider.getList(
+              token: widget.token,
+              userId: widget.userId,
+              classId: widget.materiId,
+            );
+          }
+        });
       });
-    });
+    }
   }
 
   @override
@@ -162,29 +172,31 @@ class _PDFViewerState extends State<PDFViewer> {
                         ? Center(child: CircularProgressIndicator())
                         : Container()
                     : Center(child: Text(errorMessage)),
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(top: 5, left: 5),
-                  padding: EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.amber,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        offset: Offset(0.0, 1.0),
-                        spreadRadius: 0.3,
-                        blurRadius: 3.0,
+                widget.timer
+                    ? Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(top: 5, left: 5),
+                        padding: EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.amber,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              offset: Offset(0.0, 1.0),
+                              spreadRadius: 0.3,
+                              blurRadius: 3.0,
+                            )
+                          ],
+                        ),
+                        height: 34,
+                        width: 70,
+                        child: Text(
+                          "$hoursStr:$minutesStr:$secondsStr",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       )
-                    ],
-                  ),
-                  height: 34,
-                  width: 70,
-                  child: Text(
-                    "$hoursStr:$minutesStr:$secondsStr",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                    : SizedBox(),
               ],
             ),
       floatingActionButton: FutureBuilder<PDFViewController>(

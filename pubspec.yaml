@@ -1,7 +1,7 @@
 name: skripsi_rinaldo
 description: A new Flutter project.
 
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -17,17 +17,19 @@ dependencies:
   provider: ^4.0.0
   fluttertoast: ^7.1.1
   shared_preferences: any
-  flutter_form_builder: ^5.0.0
+  flutter_form_builder: ^6.0.0
   flutter_pdfview: ^1.0.4
   path_provider: ^2.0.0-nullsafety.1
-  image_picker: ^0.6.4
+  image_picker: ^0.7.0
+  community_material_icon: ^5.9.55
+  file_picker: ^3.0.0
+  permission_handler: ^7.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
 flutter:
-
   uses-material-design: true
 
   assets:
@@ -40,4 +42,3 @@ flutter:
         - asset: assets/fonts/notosans_bold.ttf
         - asset: assets/fonts/notosans_italic.ttf
           style: italic
-        

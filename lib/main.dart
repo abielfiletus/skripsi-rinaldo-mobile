@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skripsi_rinaldo/providers/dashboard.dart';
+import 'package:skripsi_rinaldo/providers/Ortu.dart';
 
 import 'package:skripsi_rinaldo/utils/SplashScreen.dart';
-import 'package:skripsi_rinaldo/modules/dashboard/dashboard.dart';
+import 'package:skripsi_rinaldo/modules/guru/dashboard/Dashboard.dart';
+import 'package:skripsi_rinaldo/modules/murid/dashboard/Dashboard.dart';
+import 'package:skripsi_rinaldo/modules/orang_tua/dashboard/Dashboard.dart';
 import 'package:skripsi_rinaldo/modules/login/Login.dart';
+import 'package:skripsi_rinaldo/providers/dashboard.dart';
+import 'package:skripsi_rinaldo/providers/meeting.dart';
+import 'package:skripsi_rinaldo/providers/student.dart';
 import 'package:skripsi_rinaldo/providers/auth.dart';
 import 'package:skripsi_rinaldo/providers/history.dart';
 import 'package:skripsi_rinaldo/providers/materi.dart';
@@ -27,13 +32,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => QuizProvider()),
         ChangeNotifierProvider(create: (_) => KelasProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => StudentProvider()),
+        ChangeNotifierProvider(create: (_) => MeetingProvider()),
+        ChangeNotifierProvider(create: (_) => OrtuProvider()),
       ],
       child: Consumer<AuthProvider>(
         builder: (ctx, auth, _) => MaterialApp(
           title: 'Learning From Home',
           theme: ThemeData(fontFamily: 'Notosans'),
           home: auth.isAuth
-              ? DashboardPage()
+              ? dashboard(auth.user.roleId)
               : FutureBuilder(
                   future: auth.tryAutoLogin(),
                   builder: (ctx, authResult) =>
@@ -42,5 +50,18 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget dashboard(role) {
+    switch (role) {
+      case 1:
+        return DashboardGuruPage();
+        break;
+      case 2:
+        return DashboardMuridPage();
+        break;
+      default:
+        return DashboardOrtuPage();
+    }
   }
 }
