@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:skripsi_rinaldo/models/meeting.dart';
-import 'package:skripsi_rinaldo/models/user.dart';
-import 'package:skripsi_rinaldo/providers/meeting.dart';
+import 'package:skripsi_rinaldo/providers/kelas.dart';
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
 
-class DeleteGuruMeetingDialog extends StatefulWidget {
-  final User user;
-  final Meeting meeting;
+class DeleteClassDialog extends StatefulWidget {
   final int id;
+  final int userId;
+  final String name;
+  final String token;
 
-  DeleteGuruMeetingDialog({
-    @required this.user,
-    @required this.meeting,
-    @required this.id,
-  });
+  DeleteClassDialog({@required this.id, @required this.userId, @required this.name, @required this.token});
 
   @override
-  _DeleteGuruMeetingDialogState createState() => _DeleteGuruMeetingDialogState();
+  _DeleteClassDialogState createState() => _DeleteClassDialogState();
 }
 
-class _DeleteGuruMeetingDialogState extends State<DeleteGuruMeetingDialog> {
+class _DeleteClassDialogState extends State<DeleteClassDialog> {
   bool _buttonIsLoading = false;
 
   @override
@@ -33,9 +28,9 @@ class _DeleteGuruMeetingDialogState extends State<DeleteGuruMeetingDialog> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Hapus Meeting'),
+            Text('Hapus Kelas'),
             SizedBox(height: 15),
-            Text('Meeting : ${widget.meeting.name} - ${widget.meeting.className}'),
+            Text('Kelas : ${widget.name}'),
             SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -77,19 +72,16 @@ class _DeleteGuruMeetingDialogState extends State<DeleteGuruMeetingDialog> {
                     onTap: () async {
                       setState(() => _buttonIsLoading = true);
                       try {
-                        await Provider.of<MeetingProvider>(
-                          context,
-                          listen: false,
-                        ).delete(widget.user.token, widget.id);
+                        await Provider.of<KelasProvider>(context, listen: false).delete(widget.token, widget.id);
 
                         setState(() => _buttonIsLoading = false);
 
-                        Provider.of<MeetingProvider>(context, listen: false).getList(
-                          token: widget.user.token,
-                          userId: widget.user.id.toString(),
+                        Provider.of<KelasProvider>(context, listen: false).guruGetClass(
+                          token: widget.token,
+                          userId: widget.userId,
                         );
                         Navigator.pop(context);
-                        Fluttertoast.showToast(msg: 'Berhasil menghapus usulan meeting');
+                        Fluttertoast.showToast(msg: 'Berhasil menghapus kelas');
                       } on HttpException catch (err) {
                         setState(() => _buttonIsLoading = false);
                         Fluttertoast.showToast(
@@ -101,7 +93,7 @@ class _DeleteGuruMeetingDialogState extends State<DeleteGuruMeetingDialog> {
                         setState(() => _buttonIsLoading = false);
                         print(err);
                         Fluttertoast.showToast(
-                          msg: 'Gagal menghapus usulan meeting. Silakan coba lagi.',
+                          msg: 'Gagal menghapus kelas. Silakan coba lagi.',
                           backgroundColor: Colors.red,
                           textColor: Colors.white,
                         );

@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
-import 'package:skripsi_rinaldo/models/user.dart';
 
 class AuthProvider with ChangeNotifier {
   final formatter = new DateFormat('yyyy-MM-dd');
@@ -150,6 +150,23 @@ class AuthProvider with ChangeNotifier {
     return doUpdate(jsonData);
   }
 
+  Future<void> forgotPassword(String email) async {
+    const Map<String, String> headers = {"Content-type": "application/json"};
+    final String jsonData = json.encode({"email": email.trim()});
+
+    Uri url = Uri.http(constant.API_URL, '/api/auth/forgot-password');
+
+    try {
+      final res = await http.post(url, body: jsonData, headers: headers);
+
+      final bool status = json.decode(res.body)['status'];
+      print(json.decode(res.body));
+      if (!status) throw HttpException('Email tidak terdaftar.');
+    } catch (err) {
+      throw err;
+    }
+  }
+
   Future<void> updatePassword(String password) async {
     String jenis;
     switch (_userdata.jenisKelamin) {
@@ -201,7 +218,8 @@ class AuthProvider with ChangeNotifier {
       nis: extractedData['nis'],
       roleId: extractedData['role_id'],
       roleName: extractedData['role_name'],
-      jenisKelamin: extractedData['jenis_kelamin'] == 'L' ? constant.JenisKelamin.laki : constant.JenisKelamin.perempuan,
+      jenisKelamin:
+          extractedData['jenis_kelamin'] == 'L' ? constant.JenisKelamin.laki : constant.JenisKelamin.perempuan,
       avatar: extractedData['avatar'],
     );
 
@@ -210,7 +228,10 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> doUpdate(Map<String, String> jsonData) async {
-    final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer ${_userdata.token}"};
+    final Map<String, String> headers = {
+      "Content-type": "application/json",
+      "Authorization": "Bearer ${_userdata.token}"
+    };
 
     final url = Uri.http(constant.API_URL, '/api/user/${_userdata.id}');
     final req = http.MultipartRequest('PUT', url);

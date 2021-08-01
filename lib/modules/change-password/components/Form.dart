@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-
 import 'package:skripsi_rinaldo/providers/auth.dart';
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
 
@@ -25,7 +24,7 @@ class _FormChangePasswordState extends State<FormChangePassword> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(15),
-      child: Form(
+      child: FormBuilder(
         key: globalFormKey,
         child: Column(
           children: [

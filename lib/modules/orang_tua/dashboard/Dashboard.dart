@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skripsi_rinaldo/modules/orang_tua/BottomNavigation.dart';
-
-import 'package:skripsi_rinaldo/providers/auth.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
+import 'package:skripsi_rinaldo/modules/orang_tua/BottomNavigation.dart';
+import 'package:skripsi_rinaldo/modules/orang_tua/dashboard/components/Meetinglist.dart';
+import 'package:skripsi_rinaldo/providers/auth.dart';
 import 'package:skripsi_rinaldo/providers/dashboard.dart';
-import 'package:skripsi_rinaldo/providers/kelas.dart';
 import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 
 class DashboardOrtuPage extends StatefulWidget {
@@ -22,23 +21,16 @@ class _DashboardOrtuPageState extends State<DashboardOrtuPage> {
   void initState() {
     super.initState();
     _user = Provider.of<AuthProvider>(context, listen: false).user;
-    Provider.of<KelasProvider>(context, listen: false).getList(token: _user.token, userId: _user.id).then((_) {
-      final data = Provider.of<KelasProvider>(context, listen: false).list;
-
-      if (data.length > 0) {
-        Provider.of<DashboardProvider>(context, listen: false)
-            .getData(token: _user.token, userId: _user.id.toString(), classId: data[0].id.toString())
-            .then((_) => setState(() => _isLoading = false));
-      } else {
-        setState(() => _isLoading = false);
-      }
-    });
+    Provider.of<DashboardProvider>(context, listen: false)
+        .getDataOrtu(token: _user.token, nis: _user.nis)
+        .then((_) => setState(() => _isLoading = false));
   }
 
   @override
   Widget build(BuildContext context) {
     final data = Provider.of<DashboardProvider>(context).data;
     final padding = MediaQuery.of(context).padding;
+    final size = MediaQuery.of(context).size;
     final now = DateTime.now().hour;
     String greeting = 'Morning';
 
@@ -63,6 +55,7 @@ class _DashboardOrtuPageState extends State<DashboardOrtuPage> {
               create: (ctx) => DashboardProvider(),
               child: SingleChildScrollView(
                 child: Container(
+                  height: size.height - (65 + padding.top + padding.bottom + 15),
                   margin: EdgeInsets.only(top: padding.top),
                   padding: EdgeInsets.only(
                     top: padding.top,
@@ -144,52 +137,56 @@ class _DashboardOrtuPageState extends State<DashboardOrtuPage> {
                               Icon(Icons.pending_actions),
                               SizedBox(width: 10),
                               Text(
-                                'Pendingan Kamu',
+                                'Meeting Terdekat',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                                 softWrap: true,
                               ),
                             ],
                           ),
                           SizedBox(height: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  offset: Offset(0.0, 1.0),
-                                  spreadRadius: 0.3,
-                                  blurRadius: 3.0,
+                          data != null && data.meeting.length > 0
+                              ? Column(
+                                  children: [for (var item in data.meeting) MeetingList(item)],
                                 )
-                              ],
-                            ),
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 10,
-                            ),
-                            child: Column(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset('assets/images/empty_pending_task.jpg', width: 150, height: 150),
-                                Text('Hore tidak ada pendingan', style: TextStyle(fontStyle: FontStyle.italic)),
-                                SizedBox(height: 15),
-                              ],
-                            ),
-                          ),
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0.0, 1.0),
+                                        spreadRadius: 0.3,
+                                        blurRadius: 3.0,
+                                      )
+                                    ],
+                                  ),
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 10,
+                                  ),
+                                  child: Column(
+                                    // crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset('assets/images/empty_pending_task.jpg', width: 150, height: 150),
+                                      Text('Tidak ada meeting terdekat', style: TextStyle(fontStyle: FontStyle.italic)),
+                                      SizedBox(height: 15),
+                                    ],
+                                  ),
+                                ),
                         ],
                       ),
-                      SizedBox(height: 45),
+                      SizedBox(height: 35),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.table_chart),
+                              Icon(Icons.assessment_outlined),
                               SizedBox(width: 10),
                               Text(
-                                'Summary Kamu',
+                                'Summary Belajar Murid',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                                 softWrap: true,
                               ),
@@ -242,7 +239,8 @@ class _DashboardOrtuPageState extends State<DashboardOrtuPage> {
                                               TableCell(
                                                 child: Padding(
                                                   padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text(data.summary.durasi != '' ? data.summary.durasi + ' jam' : '-'),
+                                                  child: Text(
+                                                      data.summary.durasi != '' ? data.summary.durasi + ' jam' : '-'),
                                                 ),
                                               ),
                                             ],
@@ -298,55 +296,11 @@ class _DashboardOrtuPageState extends State<DashboardOrtuPage> {
                                     // crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Image.asset('assets/images/empty_class.jpg', width: 190, height: 190),
-                                      Text('Kamu belum terdaftar di kelas', style: TextStyle(fontStyle: FontStyle.italic)),
+                                      Text('Murid belum terdaftar di kelas manapun',
+                                          style: TextStyle(fontStyle: FontStyle.italic)),
                                       SizedBox(height: 15),
                                     ],
                                   ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 45),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.campaign),
-                              SizedBox(width: 10),
-                              Text(
-                                'Pengumuman',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                softWrap: true,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  offset: Offset(0.0, 1.0),
-                                  spreadRadius: 0.3,
-                                  blurRadius: 3.0,
-                                )
-                              ],
-                            ),
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 10,
-                            ),
-                            child: Column(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset('assets/images/empty_news.jpg', width: 190, height: 190),
-                                Text('Tidak ada pengumuman', style: TextStyle(fontStyle: FontStyle.italic)),
-                                SizedBox(height: 15),
-                              ],
-                            ),
                           ),
                         ],
                       ),

@@ -1,10 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
-import 'package:skripsi_rinaldo/models/usulanMeeting.dart';
 import 'package:skripsi_rinaldo/models/meeting.dart';
+import 'package:skripsi_rinaldo/models/usulanMeeting.dart';
+import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
 
 class MeetingProvider extends ChangeNotifier {
@@ -111,13 +111,14 @@ class MeetingProvider extends ChangeNotifier {
 
       final List<UsulanMeeting> loadedUsulanMeeting = [];
       data.asMap().forEach((key, value) {
+        print(value);
         loadedUsulanMeeting.add(
           UsulanMeeting(
             classId: value['usulan_meeting']['class']['id'],
             className: value['usulan_meeting']['class']['name'],
             end: DateTime.parse(value['end_date']),
             start: DateTime.parse(value['start_date']),
-            id: value['id'],
+            id: value['usulan_meeting_id'],
             name: value['usulan_meeting']['name'],
             link: value['link'],
           ),

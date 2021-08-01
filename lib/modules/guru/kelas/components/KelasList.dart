@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:skripsi_rinaldo/models/Kelas.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/guru/kelas/components/AddClass.dart';
+import 'package:skripsi_rinaldo/modules/guru/kelas/components/DeleteClass.dart';
 import 'package:skripsi_rinaldo/modules/guru/materi/Materi.dart';
 import 'package:skripsi_rinaldo/modules/guru/student/Student.dart';
 
@@ -82,12 +83,16 @@ class _KelasGuruListState extends State<KelasGuruList> {
                           borderRadius: BorderRadius.circular(50),
                           child: PopupMenuButton(
                             padding: EdgeInsets.symmetric(vertical: 0),
-                            itemBuilder: (BuildContext ctx) => ['Ubah', 'Murid']
+                            itemBuilder: (BuildContext ctx) => ['Ubah', 'Murid', 'Hapus']
                                 .map((item) => PopupMenuItem(
                                       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                                       child: Row(
                                         children: [
-                                          item == 'Ubah' ? Icon(Icons.edit) : Icon(Icons.person),
+                                          item == 'Ubah'
+                                              ? Icon(Icons.edit)
+                                              : item == 'Hapus'
+                                                  ? Icon(Icons.delete)
+                                                  : Icon(Icons.person),
                                           SizedBox(width: 5),
                                           Text(item, style: TextStyle(fontSize: 14)),
                                         ],
@@ -106,6 +111,19 @@ class _KelasGuruListState extends State<KelasGuruList> {
                                       user: widget.user,
                                       id: widget.kelas.id,
                                       idx: widget.idx,
+                                    ),
+                                  ),
+                                );
+                              } else if (val == 'Hapus') {
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    opaque: false,
+                                    pageBuilder: (ctx, _, __) => DeleteClassDialog(
+                                      name: widget.kelas.name,
+                                      id: widget.kelas.id,
+                                      token: widget.user.token,
+                                      userId: widget.user.id,
                                     ),
                                   ),
                                 );

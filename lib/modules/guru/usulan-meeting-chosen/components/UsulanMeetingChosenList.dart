@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'package:skripsi_rinaldo/models/ortu.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
 
@@ -8,8 +7,9 @@ class UsulanMeetingChosenList extends StatelessWidget {
   final Ortu ortu;
   final User user;
   final int classId;
+  final bool showDate;
 
-  UsulanMeetingChosenList(this.ortu, this.user, this.classId);
+  UsulanMeetingChosenList(this.ortu, this.user, this.classId, {this.showDate = true});
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +50,14 @@ class UsulanMeetingChosenList extends StatelessWidget {
               children: [
                 Text(ortu.name),
                 Text('Murid : ${ortu.studentName}'),
-                ortu.chosenDate != null
-                    ? Text('Tanggal : ${DateFormat('yyyy-MM-dd HH:mm').format(ortu.chosenDate)}')
-                    : Text(
-                        'Belum memilih tanggal',
-                        style: TextStyle(fontStyle: FontStyle.italic, color: Colors.black54),
-                      ),
+                showDate
+                    ? ortu.chosenDate != null
+                        ? Text('Tanggal : ${DateFormat('yyyy-MM-dd HH:mm').format(ortu.chosenDate)}')
+                        : Text(
+                            'Belum memilih tanggal',
+                            style: TextStyle(fontStyle: FontStyle.italic, color: Colors.black54),
+                          )
+                    : SizedBox(),
               ],
             ),
           ),

@@ -1,2 +1,2 @@
 enum JenisKelamin { laki, perempuan }
-const String API_URL = '188.166.227.76:3500';
+const String API_URL = '178.128.63.183:3500';

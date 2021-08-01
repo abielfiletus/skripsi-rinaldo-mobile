@@ -1,10 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-
-import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/models/Kelas.dart';
+import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
 
 class KelasProvider extends ChangeNotifier {
@@ -228,17 +228,19 @@ class KelasProvider extends ChangeNotifier {
       final bool status = body['status'];
       if (!status) throw HttpException('Gagal membuat kelas. Silahkan coba kembali.');
 
-      final data = body['data'];
-      _kelas[idx] = Kelas(
-        id: _kelas[idx].id,
-        code: _kelas[idx].code,
-        end: formatter.parse(end),
-        name: name,
-        start: formatter.parse(start),
-        materiTotal: _kelas[idx].materiTotal,
-        studentTotal: _kelas[idx].studentTotal,
-        nilaiMinimum: int.parse(nilai),
-      );
+      notifyListeners();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  Future<void> delete(String token, int id) async {
+    final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer $token"};
+
+    final url = Uri.http(constant.API_URL, 'api/class/$id');
+
+    try {
+      await http.delete(url, headers: headers);
 
       notifyListeners();
     } catch (err) {

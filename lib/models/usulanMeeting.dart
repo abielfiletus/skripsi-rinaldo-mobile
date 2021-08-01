@@ -6,6 +6,7 @@ class UsulanMeeting {
   final String className;
   final int classId;
   final String link;
+  final String description;
 
   UsulanMeeting({
     this.id,
@@ -15,5 +16,6 @@ class UsulanMeeting {
     this.className,
     this.classId,
     this.link,
+    this.description,
   });
 }

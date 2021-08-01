@@ -105,7 +105,7 @@ class _LoginBodyState extends State<LoginBody> {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (ctx) => ForgotPasswordPage(),

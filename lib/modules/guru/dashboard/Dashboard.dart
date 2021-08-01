@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skripsi_rinaldo/modules/guru/BottomNavigation.dart';
-
-import 'package:skripsi_rinaldo/providers/auth.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
+import 'package:skripsi_rinaldo/modules/guru/BottomNavigation.dart';
+import 'package:skripsi_rinaldo/modules/guru/dashboard/components/MateriList.dart';
+import 'package:skripsi_rinaldo/modules/orang_tua/dashboard/components/Meetinglist.dart';
+import 'package:skripsi_rinaldo/providers/auth.dart';
 import 'package:skripsi_rinaldo/providers/dashboard.dart';
-import 'package:skripsi_rinaldo/providers/kelas.dart';
 import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 
 class DashboardGuruPage extends StatefulWidget {
@@ -22,17 +22,9 @@ class _DashboardGuruPageState extends State<DashboardGuruPage> {
   void initState() {
     super.initState();
     _user = Provider.of<AuthProvider>(context, listen: false).user;
-    Provider.of<KelasProvider>(context, listen: false).getList(token: _user.token, userId: _user.id).then((_) {
-      final data = Provider.of<KelasProvider>(context, listen: false).list;
-
-      if (data.length > 0) {
-        Provider.of<DashboardProvider>(context, listen: false)
-            .getData(token: _user.token, userId: _user.id.toString(), classId: data[0].id.toString())
-            .then((_) => setState(() => _isLoading = false));
-      } else {
-        setState(() => _isLoading = false);
-      }
-    });
+    Provider.of<DashboardProvider>(context, listen: false)
+        .getDataGuru(token: _user.token, userId: _user.id.toString())
+        .then((_) => setState(() => _isLoading = false));
   }
 
   @override
@@ -49,8 +41,7 @@ class _DashboardGuruPageState extends State<DashboardGuruPage> {
     }
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationGuru('home'
-      ),
+      bottomNavigationBar: BottomNavigationGuru('home'),
       body: _isLoading
           ? Container(
               width: double.infinity,
@@ -145,165 +136,42 @@ class _DashboardGuruPageState extends State<DashboardGuruPage> {
                               Icon(Icons.pending_actions),
                               SizedBox(width: 10),
                               Text(
-                                'Pendingan Kamu',
+                                'Meeting Kamu',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                                 softWrap: true,
                               ),
                             ],
                           ),
                           SizedBox(height: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  offset: Offset(0.0, 1.0),
-                                  spreadRadius: 0.3,
-                                  blurRadius: 3.0,
-                                )
-                              ],
-                            ),
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 10,
-                            ),
-                            child: Column(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset('assets/images/empty_pending_task.jpg', width: 150, height: 150),
-                                Text('Hore tidak ada pendingan', style: TextStyle(fontStyle: FontStyle.italic)),
-                                SizedBox(height: 15),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 45),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.table_chart),
-                              SizedBox(width: 10),
-                              Text(
-                                'Summary Kamu',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                softWrap: true,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  offset: Offset(0.0, 1.0),
-                                  spreadRadius: 0.3,
-                                  blurRadius: 3.0,
-                                )
-                              ],
-                            ),
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 10,
-                            ),
-                            child: data != null && data.summary != null && data.summary.id != ''
-                                ? Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Table(
-                                        columnWidths: {
-                                          0: FlexColumnWidth(10),
-                                          1: FlexColumnWidth(1),
-                                          2: FlexColumnWidth(11),
-                                        },
-                                        children: [
-                                          TableRow(
-                                            children: [
-                                              TableCell(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text('Total Durasi Belajar'),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text(':'),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text(data.summary.durasi != '' ? data.summary.durasi + ' jam' : '-'),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          TableRow(
-                                            children: [
-                                              TableCell(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text('Rata - Rata Nilai'),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text(':'),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text(data.summary.nilai),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          TableRow(
-                                            children: [
-                                              TableCell(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text('Status Kelulusan'),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                                  child: Text(':'),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 10),
-                                                    child: Text(data.summary.status)),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                          data != null && data.meeting != null && data.meeting.length > 0
+                              ? Column(children: [for (var item in data.meeting) MeetingList(item)])
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0.0, 1.0),
+                                        spreadRadius: 0.3,
+                                        blurRadius: 3.0,
+                                      )
                                     ],
-                                  )
-                                : Column(
+                                  ),
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 10,
+                                  ),
+                                  child: Column(
                                     // crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Image.asset('assets/images/empty_class.jpg', width: 190, height: 190),
-                                      Text('Kamu belum terdaftar di kelas', style: TextStyle(fontStyle: FontStyle.italic)),
+                                      Image.asset('assets/images/empty_pending_task.jpg', width: 150, height: 150),
+                                      Text('Tidak ada meeting terdekat', style: TextStyle(fontStyle: FontStyle.italic)),
                                       SizedBox(height: 15),
                                     ],
                                   ),
-                          ),
+                                ),
                         ],
                       ),
                       SizedBox(height: 45),
@@ -312,43 +180,46 @@ class _DashboardGuruPageState extends State<DashboardGuruPage> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.campaign),
+                              Icon(Icons.book_outlined),
                               SizedBox(width: 10),
                               Text(
-                                'Pengumuman',
+                                'Materi Sedang Berlangsung',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                                 softWrap: true,
                               ),
                             ],
                           ),
                           SizedBox(height: 10),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  offset: Offset(0.0, 1.0),
-                                  spreadRadius: 0.3,
-                                  blurRadius: 3.0,
-                                )
-                              ],
-                            ),
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 10,
-                            ),
-                            child: Column(
-                              // crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset('assets/images/empty_news.jpg', width: 190, height: 190),
-                                Text('Tidak ada pengumuman', style: TextStyle(fontStyle: FontStyle.italic)),
-                                SizedBox(height: 15),
-                              ],
-                            ),
-                          ),
+                          data != null && data.materi != null && data.materi.length > 0
+                              ? Column(children: [for (var item in data.materi) MateriList(item)])
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0.0, 1.0),
+                                        spreadRadius: 0.3,
+                                        blurRadius: 3.0,
+                                      )
+                                    ],
+                                  ),
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 10,
+                                  ),
+                                  child: Column(
+                                    // crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Image.asset('assets/images/empty_class.jpg', width: 190, height: 190),
+                                      Text('Belum ada materi yang berlangsung',
+                                          style: TextStyle(fontStyle: FontStyle.italic)),
+                                      SizedBox(height: 15),
+                                    ],
+                                  ),
+                                ),
                         ],
                       ),
                     ],

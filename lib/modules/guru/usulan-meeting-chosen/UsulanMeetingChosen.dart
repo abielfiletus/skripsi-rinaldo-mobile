@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:skripsi_rinaldo/providers/Ortu.dart';
-import 'package:skripsi_rinaldo/providers/auth.dart';
-import 'package:skripsi_rinaldo/providers/kelas.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/guru/BottomNavigation.dart';
 import 'package:skripsi_rinaldo/modules/guru/usulan-meeting-chosen/components/UsulanMeetingChosenList.dart';
+import 'package:skripsi_rinaldo/providers/Ortu.dart';
+import 'package:skripsi_rinaldo/providers/auth.dart';
+import 'package:skripsi_rinaldo/providers/kelas.dart';
 
 class UsulanMeetingChosen extends StatefulWidget {
   final int usulanMeetingId;
@@ -65,7 +64,7 @@ class _UsulanMeetingChosenState extends State<UsulanMeetingChosen> {
                     )
                   : Container(
                       child: Text(
-                        'Belum ada materi di kelas ini.',
+                        'Belum ada peserta di kelas untuk usulan meeting ini.',
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
                         ),

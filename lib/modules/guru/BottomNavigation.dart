@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'package:skripsi_rinaldo/utils/ButtonIcon.dart';
-import 'package:skripsi_rinaldo/modules/profile/Profile.dart';
 import 'package:skripsi_rinaldo/modules/guru/dashboard/Dashboard.dart';
-import 'package:skripsi_rinaldo/modules/guru/meeting/Meeting.dart';
 import 'package:skripsi_rinaldo/modules/guru/kelas/Kelas.dart';
+import 'package:skripsi_rinaldo/modules/guru/meeting/Meeting.dart';
+import 'package:skripsi_rinaldo/modules/profile/Profile.dart';
+import 'package:skripsi_rinaldo/utils/ButtonIcon.dart';
 
 class BottomNavigationGuru extends StatelessWidget {
   final String active;
@@ -19,7 +18,7 @@ class BottomNavigationGuru extends StatelessWidget {
         color: Colors.white,
         boxShadow: [BoxShadow(blurRadius: 5, color: Colors.black26, spreadRadius: 1)],
       ),
-      height: 77,
+      height: 65,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -27,18 +26,22 @@ class BottomNavigationGuru extends StatelessWidget {
             icon: active == 'home' ? Icon(Icons.home) : Icon(Icons.home_outlined),
             text: 'Home',
             fontWeight: active == 'home' ? FontWeight.bold : FontWeight.normal,
-            borderSideTop: active == 'home' ? BorderSide(color: Colors.black, width: 2) : BorderSide(color: Colors.transparent),
+            borderSideTop:
+                active == 'home' ? BorderSide(color: Colors.black, width: 2) : BorderSide(color: Colors.transparent),
             onPress: () {
-              if (active != 'home') Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => DashboardGuruPage()));
+              if (active != 'home')
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => DashboardGuruPage()));
             },
           ),
           ButtonIcon(
             icon: active == 'kelas' ? Icon(Icons.book) : Icon(Icons.book_outlined),
             text: 'Class',
             fontWeight: active == 'kelas' ? FontWeight.bold : FontWeight.normal,
-            borderSideTop: active == 'kelas' ? BorderSide(color: Colors.black, width: 2) : BorderSide(color: Colors.transparent),
+            borderSideTop:
+                active == 'kelas' ? BorderSide(color: Colors.black, width: 2) : BorderSide(color: Colors.transparent),
             onPress: () {
-              if (active != 'kelas') Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => KelasGuruPage()));
+              if (active != 'kelas')
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => KelasGuruPage()));
             },
           ),
           ButtonIcon(
@@ -48,7 +51,8 @@ class BottomNavigationGuru extends StatelessWidget {
             borderSideTop:
                 active == 'meeting' ? BorderSide(color: Colors.black, width: 2) : BorderSide(color: Colors.transparent),
             onPress: () {
-              if (active != 'meeting') Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => MeetingGuruPage()));
+              if (active != 'meeting')
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => MeetingGuruPage()));
             },
           ),
           ButtonIcon(
@@ -58,7 +62,8 @@ class BottomNavigationGuru extends StatelessWidget {
             borderSideTop:
                 active == 'profile' ? BorderSide(color: Colors.black, width: 2) : BorderSide(color: Colors.transparent),
             onPress: () {
-              if (active != 'profile') Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => ProfilePage()));
+              if (active != 'profile')
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => ProfilePage()));
             },
           ),
         ],
