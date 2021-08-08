@@ -1,10 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/models/materi.dart';
 import 'package:skripsi_rinaldo/models/quiz.dart';
+import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
 
 class MateriProvider extends ChangeNotifier {
@@ -12,6 +12,10 @@ class MateriProvider extends ChangeNotifier {
 
   List<Materi> get list {
     return [..._materi];
+  }
+
+  void resetMateri() {
+    _materi = [];
   }
 
   Materi detail(int idx) {

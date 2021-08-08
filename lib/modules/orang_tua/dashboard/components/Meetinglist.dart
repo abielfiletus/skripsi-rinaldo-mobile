@@ -45,7 +45,7 @@ class MeetingList extends StatelessWidget {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     softWrap: true,
                   ),
-                  if (meeting.className.isNotEmpty)
+                  if (meeting.className != null)
                     Text(
                       meeting.className,
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

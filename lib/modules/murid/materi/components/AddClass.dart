@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/providers/kelas.dart';
 import 'package:skripsi_rinaldo/providers/materi.dart';
@@ -20,6 +19,8 @@ class AddClassMuridDialog extends StatefulWidget {
 class _AddClassMuridDialogState extends State<AddClassMuridDialog> {
   final GlobalKey<FormBuilderState> globalFormKey = new GlobalKey<FormBuilderState>();
   TextEditingController classCodeController = new TextEditingController();
+
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +86,7 @@ class _AddClassMuridDialogState extends State<AddClassMuridDialog> {
                       ),
                       onTap: () async {
                         if (validateAndSave()) {
+                          setState(() => _isLoading = true);
                           try {
                             await Provider.of<KelasProvider>(
                               context,
@@ -100,17 +102,22 @@ class _AddClassMuridDialogState extends State<AddClassMuridDialog> {
                               final data = Provider.of<KelasProvider>(context, listen: false).list;
 
                               if (data.length > 0) {
-                                Provider.of<MateriProvider>(context, listen: false).getList(token: widget.user.token, userId: widget.user.id.toString());
+                                Provider.of<MateriProvider>(context, listen: false).getList(
+                                    token: widget.user.token,
+                                    userId: widget.user.id.toString(),
+                                    classId: data[0].id.toString());
                               }
                               Navigator.pop(context);
                               Fluttertoast.showToast(msg: 'Berhasil mendaftar kelas');
                             });
+                            setState(() => _isLoading = false);
                           } on HttpException catch (err) {
                             Fluttertoast.showToast(
                               msg: err.toString(),
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                             );
+                            setState(() => _isLoading = false);
                           } catch (err) {
                             print(err);
                             Fluttertoast.showToast(
@@ -118,6 +125,7 @@ class _AddClassMuridDialogState extends State<AddClassMuridDialog> {
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                             );
+                            setState(() => _isLoading = false);
                           }
                         }
                       },

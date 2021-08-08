@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
-
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/guru/meeting/components/MeetingList.dart';
-import 'package:skripsi_rinaldo/modules/guru/meeting/components/UsulanMeetingList.dart';
 import 'package:skripsi_rinaldo/modules/orang_tua/BottomNavigation.dart';
 import 'package:skripsi_rinaldo/modules/orang_tua/meeting/components/UsulanMeetingOrtuList.dart';
 import 'package:skripsi_rinaldo/providers/auth.dart';
@@ -26,10 +24,10 @@ class _MeetingOrtuPageState extends State<MeetingOrtuPage> with SingleTickerProv
   void initState() {
     _user = Provider.of<AuthProvider>(context, listen: false).user;
     Provider.of<MeetingProvider>(context, listen: false)
-        .getListOrtuUsulan(token: _user.token, userId: _user.id.toString())
+        .getListOrtuUsulan(token: _user.token, nis: _user.nis)
         .then((_) {
       Provider.of<MeetingProvider>(context, listen: false)
-          .getListMeeting(token: _user.token, userId: _user.id.toString())
+          .getListMeeting(token: _user.token, nis: _user.nis)
           .then((_) => setState(() => _isLoading = false));
     });
 

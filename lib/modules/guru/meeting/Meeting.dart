@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
-
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/guru/BottomNavigation.dart';
 import 'package:skripsi_rinaldo/modules/guru/meeting/components/AddMeeting.dart';
@@ -28,7 +27,9 @@ class _MeetingGuruPageState extends State<MeetingGuruPage> with SingleTickerProv
   @override
   void initState() {
     _user = Provider.of<AuthProvider>(context, listen: false).user;
-    Provider.of<MeetingProvider>(context, listen: false).getList(token: _user.token, userId: _user.id.toString()).then((_) {
+    Provider.of<MeetingProvider>(context, listen: false)
+        .getList(token: _user.token, userId: _user.id.toString())
+        .then((_) {
       Provider.of<MeetingProvider>(context, listen: false)
           .getListMeeting(token: _user.token, userId: _user.id.toString())
           .then((_) => setState(() => _isLoading = false));
@@ -163,7 +164,7 @@ class _MeetingGuruPageState extends State<MeetingGuruPage> with SingleTickerProv
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (_selectedIndex == 0) {
+            if (_selectedIndex == 0 || _selectedIndex == null) {
               Navigator.push(
                 context,
                 PageRouteBuilder(

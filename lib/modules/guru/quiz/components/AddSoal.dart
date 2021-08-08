@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/providers/quiz.dart';
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
@@ -30,7 +29,7 @@ class _AddGuruSoalDialogState extends State<AddGuruSoalDialog> {
   TextEditingController jawabanCController = new TextEditingController();
   TextEditingController jawabanDController = new TextEditingController();
   TextEditingController jawabanEController = new TextEditingController();
-  TextEditingController jawabanBenarController = new TextEditingController();
+  TextEditingController jawabanBenarController = new TextEditingController(text: 'a');
 
   bool _isLoading = true;
   bool _buttonIsLoading = false;
@@ -306,7 +305,8 @@ class _AddGuruSoalDialogState extends State<AddGuruSoalDialog> {
                                         children: [
                                           Icon(Icons.cancel, color: Colors.white),
                                           SizedBox(width: 5),
-                                          Text('Cancel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                          Text('Cancel',
+                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                                         ],
                                       ),
                                     ),

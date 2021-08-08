@@ -62,34 +62,36 @@ class DashboardProvider extends ChangeNotifier {
       final res = await http.get(url, headers: headers);
       final data = json.decode(res.body)['data'];
 
-      if (data['murid'].length > 0) {
-        summary = Summary(
-          id: data['murid'][0]['id'] != null ? data['murid'][0]['id'].toString() : '',
-          durasi: data['murid'][0]['durasi'] != null
-              ? ((double.parse(data['murid'][0]['durasi']) / 3600).toStringAsFixed(3)).toString()
-              : '',
-          nilai: data['murid'][0]['nilai'] != null ? data['murid'][0]['nilai'].toString() : '-',
-          status: data['murid'][0]['status'] ?? '-',
-        );
-      }
-
-      if (data['meeting'].length > 0) {
-        for (var item in data['meeting']) {
-          meeting.add(
-            UsulanMeeting(
-              id: item['usulan_meeting_id'],
-              classId: item['usulan_meeting']['class_id'],
-              end: DateTime.parse(item['end_date']),
-              link: item['link'],
-              name: item['usulan_meeting']['name'],
-              start: DateTime.parse(item['start_date']),
-              description: item['usulan_meeting']['description'],
-            ),
+      if (data != null) {
+        if (data['murid'].length > 0) {
+          summary = Summary(
+            id: data['murid'][0]['id'] != null ? data['murid'][0]['id'].toString() : '',
+            durasi: data['murid'][0]['durasi'] != null
+                ? ((double.parse(data['murid'][0]['durasi']) / 3600).toStringAsFixed(3)).toString()
+                : '',
+            nilai: data['murid'][0]['nilai'] != null ? data['murid'][0]['nilai'].toString() : '-',
+            status: data['murid'][0]['status'] ?? '-',
           );
         }
-      }
 
-      _dashboard = Dashboard(summary: summary, meeting: meeting);
+        if (data['meeting'].length > 0) {
+          for (var item in data['meeting']) {
+            meeting.add(
+              UsulanMeeting(
+                id: item['usulan_meeting_id'],
+                classId: item['usulan_meeting']['class_id'],
+                end: DateTime.parse(item['end_date']),
+                link: item['link'],
+                name: item['usulan_meeting']['name'],
+                start: DateTime.parse(item['start_date']),
+                description: item['usulan_meeting']['description'],
+              ),
+            );
+          }
+        }
+
+        _dashboard = Dashboard(summary: summary, meeting: meeting);
+      }
       notifyListeners();
     } catch (err) {
       print(err);
@@ -100,7 +102,7 @@ class DashboardProvider extends ChangeNotifier {
   Future<void> getDataGuru({@required String token, String userId = ''}) async {
     List<DashboardMateri> materi = [];
     List<UsulanMeeting> meeting = [];
-    final params = {'user_id': userId, 'date': DateFormat('yyyy-MM-DD').format(DateTime.now())};
+    final params = {'user_id': userId, 'date': DateFormat('yyyy-MM-dd').format(DateTime.now())};
 
     final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer $token"};
 

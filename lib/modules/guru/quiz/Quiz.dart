@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/guru/BottomNavigation.dart';
-import 'package:skripsi_rinaldo/modules/guru/quiz/components/AddQuiz.dart';
 import 'package:skripsi_rinaldo/modules/guru/quiz/components/AddSoal.dart';
 import 'package:skripsi_rinaldo/modules/guru/quiz/components/QuizList.dart';
 import 'package:skripsi_rinaldo/providers/quiz.dart';
@@ -36,7 +34,7 @@ class _QuizGuruPageState extends State<QuizGuruPage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.keyboard_backspace_rounded, color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           widget.materiName,
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),

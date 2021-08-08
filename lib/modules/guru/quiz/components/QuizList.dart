@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-
 import 'package:skripsi_rinaldo/models/soal.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/guru/quiz/components/AddSoal.dart';
@@ -36,39 +34,84 @@ class QuizListGuru extends StatelessWidget {
           Text(
             '${idx + 1}. ${quiz.soal}',
             style: TextStyle(fontSize: 17),
+            textAlign: TextAlign.justify,
           ),
-          FormBuilderRadioGroup(
-            name: 'question',
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.all(0),
-            ),
-            enabled: false,
-            initialValue: quiz.jawabanBenar,
-            orientation: OptionsOrientation.vertical,
-            options: [
-              FormBuilderFieldOption(
-                value: 'a',
-                child: Text('${quiz.jawabanA}'),
+          SizedBox(height: 25),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 25,
+                child: Radio(
+                  value: 'a',
+                  groupValue: quiz.jawabanBenar,
+                  onChanged: null,
+                ),
               ),
-              FormBuilderFieldOption(
-                value: 'b',
-                child: Text('${quiz.jawabanB}'),
-              ),
-              FormBuilderFieldOption(
-                value: 'c',
-                child: Text('${quiz.jawabanC}'),
-              ),
-              FormBuilderFieldOption(
-                value: 'd',
-                child: Text('${quiz.jawabanD}'),
-              ),
-              FormBuilderFieldOption(
-                value: 'e',
-                child: Text('${quiz.jawabanE}'),
-              ),
+              Flexible(child: Text(quiz.jawabanA, style: TextStyle(fontSize: 16)))
             ],
           ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 25,
+                child: Radio(
+                  value: 'b',
+                  groupValue: quiz.jawabanBenar,
+                  onChanged: null,
+                ),
+              ),
+              Flexible(child: Text(quiz.jawabanB, style: TextStyle(fontSize: 16)))
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 25,
+                child: Radio(
+                  value: 'c',
+                  groupValue: quiz.jawabanBenar,
+                  onChanged: null,
+                ),
+              ),
+              Flexible(child: Text(quiz.jawabanC, style: TextStyle(fontSize: 16)))
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 25,
+                child: Radio(
+                  value: 'd',
+                  groupValue: quiz.jawabanBenar,
+                  onChanged: null,
+                ),
+              ),
+              Flexible(child: Text(quiz.jawabanD, style: TextStyle(fontSize: 16)))
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 25,
+                child: Radio(
+                  value: 'e',
+                  groupValue: quiz.jawabanBenar,
+                  onChanged: null,
+                ),
+              ),
+              Flexible(child: Text(quiz.jawabanE, style: TextStyle(fontSize: 16)))
+            ],
+          ),
+          SizedBox(height: 25),
           Row(
             children: [
               Material(

@@ -3,7 +3,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/providers/materi.dart';
 import 'package:skripsi_rinaldo/providers/quiz.dart';
@@ -188,7 +187,8 @@ class _AddGuruQuizDialogState extends State<AddGuruQuizDialog> {
                                       children: [
                                         Icon(Icons.cancel, color: Colors.white),
                                         SizedBox(width: 5),
-                                        Text('Cancel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                        Text('Cancel',
+                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                                       ],
                                     ),
                                   ),
@@ -218,7 +218,8 @@ class _AddGuruQuizDialogState extends State<AddGuruQuizDialog> {
                                             children: [
                                               Icon(Icons.send, color: Colors.white),
                                               SizedBox(width: 5),
-                                              Text('Submit', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                              Text('Submit',
+                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                                             ],
                                           ),
                                   ),
@@ -260,6 +261,7 @@ class _AddGuruQuizDialogState extends State<AddGuruQuizDialog> {
                                           backgroundColor: Colors.red,
                                           textColor: Colors.white,
                                         );
+                                        setState(() => _buttonIsLoading = false);
                                       } catch (err) {
                                         setState(() => _buttonIsLoading = false);
                                         print(err);

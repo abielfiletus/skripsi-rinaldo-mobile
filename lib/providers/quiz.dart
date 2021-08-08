@@ -1,11 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:skripsi_rinaldo/models/quiz.dart';
+import 'package:skripsi_rinaldo/models/soal.dart';
 import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
-import 'package:skripsi_rinaldo/models/soal.dart';
-import 'package:skripsi_rinaldo/models/quiz.dart';
 
 class QuizProvider extends ChangeNotifier {
   List<Soal> _soal = [];
@@ -32,6 +32,7 @@ class QuizProvider extends ChangeNotifier {
         Uri.http(constant.API_URL, '/api/class-quiz/random-quiz/$quizId'),
         headers: headers,
       );
+
       final Map<String, dynamic> data = json.decode(res.body)['data'];
       final List<Soal> loadedSoal = [];
 

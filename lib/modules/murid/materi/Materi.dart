@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/murid/BottomNavigation.dart';
 import 'package:skripsi_rinaldo/modules/murid/materi/components/AddClass.dart';
@@ -31,6 +30,7 @@ class _MateriMuridPageState extends State<MateriMuridPage> {
             .getList(token: _user.token, userId: _user.id.toString(), classId: data[0].id.toString())
             .then((_) => setState(() => _isLoading = false));
       } else {
+        Provider.of<MateriProvider>(context, listen: false).resetMateri();
         setState(() => _isLoading = false);
       }
     });
@@ -53,8 +53,7 @@ class _MateriMuridPageState extends State<MateriMuridPage> {
         ),
         backgroundColor: Colors.white,
       ),
-      bottomNavigationBar: BottomNavigationMurid('materi'
-      ),
+      bottomNavigationBar: BottomNavigationMurid('materi'),
       body: ChangeNotifierProvider(
         create: (_) => KelasProvider(),
         child: Container(

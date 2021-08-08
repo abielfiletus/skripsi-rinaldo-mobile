@@ -1,9 +1,9 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/models/history.dart';
+import 'package:skripsi_rinaldo/utils/Constants.dart' as constant;
 import 'package:skripsi_rinaldo/utils/HttpException.dart';
 
 class HistoryProvider extends ChangeNotifier {
@@ -22,8 +22,8 @@ class HistoryProvider extends ChangeNotifier {
   }) async {
     final params = {
       'form[user_id]': userId,
-      'form[start_date]': startDate,
-      'form[end_date]': endDate,
+      'form[start]': startDate,
+      'form[end]': endDate,
       'form[class_materi_id]': classMateriId,
     };
 
@@ -34,7 +34,7 @@ class HistoryProvider extends ChangeNotifier {
     try {
       final res = await http.get(url, headers: headers);
       final List data = json.decode(res.body)['data'];
-
+      print(data);
       final List<History> loadedHistory = [];
 
       data.asMap().forEach((key, value) {
@@ -98,8 +98,6 @@ class HistoryProvider extends ChangeNotifier {
       final bool status = json.decode(res.body)['status'];
 
       if (!status) throw HttpException('Gagal mengupdate history.');
-
-      final data = json.decode(res.body)['data'];
 
       notifyListeners();
     } catch (err) {

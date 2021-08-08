@@ -3,8 +3,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import 'package:skripsi_rinaldo/models/meeting.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/models/usulanMeeting.dart';
 import 'package:skripsi_rinaldo/providers/meeting.dart';
@@ -264,11 +262,13 @@ class _AddGuruMeetingDialogState extends State<AddGuruMeetingDialog> {
                                           setState(() => _buttonIsLoading = false);
                                           Provider.of<MeetingProvider>(context, listen: false).getListMeeting(
                                             token: widget.user.token,
-                                            userId: widget.user.id.toString(),
+                                            nis: widget.user.nis,
                                           );
                                           Navigator.pop(context);
                                           Fluttertoast.showToast(
-                                            msg: widget.id != null ? 'Berhasil mengubah meeting' : 'Berhasil membuat meeting',
+                                            msg: widget.id != null
+                                                ? 'Berhasil mengubah meeting'
+                                                : 'Berhasil membuat meeting',
                                           );
                                         } on HttpException catch (err) {
                                           setState(() => _buttonIsLoading = false);

@@ -98,12 +98,12 @@ class MeetingProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getListMeeting({@required String token, @required String userId, String classId}) async {
-    final params = {'form[user_id]': userId};
+  Future<void> getListMeeting({@required String token, String userId, String nis}) async {
+    final params = {'form[nis]': nis, 'form[user_id]': userId};
 
     final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer $token"};
 
-    final url = Uri.http(constant.API_URL, 'api/meeting', params);
+    final url = Uri.http(constant.API_URL, nis != null ? 'api/meeting/orang-tua' : 'api/meeting', params);
 
     try {
       final res = await http.get(url, headers: headers);
@@ -111,7 +111,6 @@ class MeetingProvider extends ChangeNotifier {
 
       final List<UsulanMeeting> loadedUsulanMeeting = [];
       data.asMap().forEach((key, value) {
-        print(value);
         loadedUsulanMeeting.add(
           UsulanMeeting(
             classId: value['usulan_meeting']['class']['id'],
@@ -132,8 +131,8 @@ class MeetingProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getListOrtuUsulan({@required String token, @required String userId}) async {
-    final params = {'form[user_id]': userId};
+  Future<void> getListOrtuUsulan({@required String token, @required String nis}) async {
+    final params = {'form[nis]': nis};
 
     final Map<String, String> headers = {"Content-type": "application/json", "Authorization": "Bearer $token"};
 
@@ -190,7 +189,7 @@ class MeetingProvider extends ChangeNotifier {
       );
 
       final body = json.decode(res.body);
-
+      print(body);
       final bool status = body['status'];
       if (!status) throw HttpException('Gagal membuat usulan meeting. Silahkan coba kembali.');
 

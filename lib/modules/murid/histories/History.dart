@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import 'package:skripsi_rinaldo/providers/auth.dart';
-import 'package:skripsi_rinaldo/providers/history.dart';
 import 'package:skripsi_rinaldo/models/user.dart';
 import 'package:skripsi_rinaldo/modules/murid/BottomNavigation.dart';
 import 'package:skripsi_rinaldo/modules/murid/histories/components/HistoryList.dart';
+import 'package:skripsi_rinaldo/providers/auth.dart';
+import 'package:skripsi_rinaldo/providers/history.dart';
 
 class HistoryMuridPage extends StatefulWidget {
   @override
@@ -39,7 +38,6 @@ class _HistoryMuridPageState extends State<HistoryMuridPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final _histories = Provider.of<HistoryProvider>(context).list;
 
     return Scaffold(
@@ -54,12 +52,12 @@ class _HistoryMuridPageState extends State<HistoryMuridPage> {
         ),
         backgroundColor: Colors.white,
       ),
-      bottomNavigationBar: BottomNavigationMurid('history'
-      ),
+      bottomNavigationBar: BottomNavigationMurid('history'),
       body: ChangeNotifierProvider(
         create: (_) => HistoryProvider(),
         child: Container(
           margin: EdgeInsets.all(10),
+          height: 355,
           child: Column(
             children: [
               SizedBox(height: 10),
@@ -72,7 +70,7 @@ class _HistoryMuridPageState extends State<HistoryMuridPage> {
                         name: 'start date',
                         firstDate: DateTime(1700),
                         lastDate: DateTime(_startDate.year, 12),
-                        format: DateFormat('yyyy-MM-dd HH:mm'),
+                        format: DateFormat('yyyy-MM-dd'),
                         decoration: InputDecoration(
                           labelText: 'Tanggal Mulai',
                           contentPadding: EdgeInsets.all(10),
@@ -103,7 +101,7 @@ class _HistoryMuridPageState extends State<HistoryMuridPage> {
                         name: 'end date',
                         firstDate: DateTime(1700),
                         lastDate: DateTime(_endDate.year, 12),
-                        format: DateFormat('yyyy-MM-dd HH:mm'),
+                        format: DateFormat('yyyy-MM-dd'),
                         decoration: InputDecoration(
                           labelText: 'Tanggal Akhir',
                           contentPadding: EdgeInsets.all(10),
@@ -190,30 +188,30 @@ class _HistoryMuridPageState extends State<HistoryMuridPage> {
                 ),
               ),
               _isLoading
-                  ? Container(
-                      height: size.height / 1.7,
-                      width: double.infinity,
+                  ? Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [CircularProgressIndicator(), SizedBox(height: 10), Text('Please Wait...')],
                       ),
                     )
-                  : Container(
-                      height: size.height / 1.7,
-                      child: ListView.builder(
-                        itemCount: _histories.length,
-                        itemBuilder: (ctx, i) {
-                          return HistoryListMurid(
-                            first: i == 0,
-                            last: i == _histories.length - 1,
-                            durasi: _histories[i].durasi,
-                            kelulusan: _histories[i].status,
-                            namaMateri: _histories[i].classMateriName,
-                            nilai: _histories[i].nilai,
-                          );
-                        },
-                      ),
-                    )
+                  : _histories.length > 0
+                      ? Expanded(
+                          // height: size.height / 1.7,
+                          child: ListView.builder(
+                            itemCount: _histories.length,
+                            itemBuilder: (ctx, i) {
+                              return HistoryListMurid(
+                                first: i == 0,
+                                last: i == _histories.length - 1,
+                                durasi: _histories[i].durasi,
+                                kelulusan: _histories[i].status,
+                                namaMateri: _histories[i].classMateriName,
+                                nilai: _histories[i].nilai,
+                              );
+                            },
+                          ),
+                        )
+                      : Expanded(child: Text('Tidak ada history'))
             ],
           ),
         ),
